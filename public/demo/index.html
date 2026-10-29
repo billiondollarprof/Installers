@@ -1,0 +1,851 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Quote Recovery Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a live messaging app. Full screen on a phone; a slim phone in the middle of a desktop. The demo runs on the presenter's taps: reply buttons, the notification, the back arrow. One edge tab opens the settings sheet. */
+:root{
+  --backdrop:#e4e8eb; --card:#ffffff; --ink:#15202a; --ink-soft:#5b6873; --line:#dde3e7; --accent:#1f5f8b; --warm:#b9761f;
+  --sheet:#ffffff; --field:#f1f4f6; --scrim:rgba(8,14,20,.35); --bezel:#0f1316;
+  --wa-head:#ffffff; --wa-head-ink:#111b21; --wa-sub:#667781; --wa-bg:#efeae2; --wa-dot:rgba(0,0,0,.035);
+  --wa-in:#ffffff; --wa-out:#d9fdd3; --wa-ink:#111b21; --wa-meta:#667781; --wa-link:#027eb5; --wa-tick:#53bdeb; --wa-sep:#e9edef;
+  --wa-chip:#ffffff; --wa-note:#ffeecd; --wa-note-ink:#54656f; --wa-bar:#f0f2f5; --wa-input:#ffffff; --wa-green:#00a884;
+  --sm-head:#f8fafd; --sm-bg:#ffffff; --sm-in:#e9eef6; --sm-in-ink:#1f1f1f; --sm-out:#0b57d0; --sm-out-ink:#ffffff; --sm-meta:#5f6368; --sm-bar:#ffffff; --sm-input:#eef1f6; --sm-ink:#1f1f1f; --sm-opt:#0b57d0;
+  --gm-bg:#ffffff; --gm-ink:#1f1f1f; --gm-soft:#5f6368; --gm-line:#e3e3e3; --gm-chip:#0b57d0; --gm-chip-bg:#ffffff; --gm-me:#f6f8fc;
+  --nb-bg:rgba(250,250,252,.97); --nb-ink:#111111;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --body:"Manrope","Segoe UI",system-ui,sans-serif;
+  --app:Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --backdrop:#0b1013; --card:#121a1f; --ink:#e8edf0; --ink-soft:#97a4ae; --line:#26313a; --accent:#6aaee0; --warm:#e3a557;
+    --sheet:#1a2228; --field:#232d34; --scrim:rgba(0,0,0,.55); --bezel:#000000;
+    --wa-head:#1f2c34; --wa-head-ink:#e9edef; --wa-sub:#8696a0; --wa-bg:#0b141a; --wa-dot:rgba(255,255,255,.022);
+    --wa-in:#202c33; --wa-out:#005c4b; --wa-ink:#e9edef; --wa-meta:#8696a0; --wa-link:#53bdeb; --wa-tick:#53bdeb; --wa-sep:#2a3942;
+    --wa-chip:#182229; --wa-note:#1d282f; --wa-note-ink:#ffd279; --wa-bar:#0b141a; --wa-input:#1f2c34; --wa-green:#00a884;
+    --sm-head:#1b1c1f; --sm-bg:#121316; --sm-in:#2b2d31; --sm-in-ink:#e3e3e3; --sm-out:#a8c7fa; --sm-out-ink:#062e6f; --sm-meta:#9aa0a6; --sm-bar:#121316; --sm-input:#2b2d31; --sm-ink:#e3e3e3; --sm-opt:#a8c7fa;
+    --gm-bg:#1f1f1f; --gm-ink:#e3e3e3; --gm-soft:#a8abb0; --gm-line:#3a3a3a; --gm-chip:#a8c7fa; --gm-chip-bg:#1f1f1f; --gm-me:#272a2e;
+    --nb-bg:rgba(44,48,52,.97); --nb-ink:#f1f1f1;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --backdrop:#0b1013; --card:#121a1f; --ink:#e8edf0; --ink-soft:#97a4ae; --line:#26313a; --accent:#6aaee0; --warm:#e3a557;
+  --sheet:#1a2228; --field:#232d34; --scrim:rgba(0,0,0,.55); --bezel:#000000;
+  --wa-head:#1f2c34; --wa-head-ink:#e9edef; --wa-sub:#8696a0; --wa-bg:#0b141a; --wa-dot:rgba(255,255,255,.022);
+  --wa-in:#202c33; --wa-out:#005c4b; --wa-ink:#e9edef; --wa-meta:#8696a0; --wa-link:#53bdeb; --wa-tick:#53bdeb; --wa-sep:#2a3942;
+  --wa-chip:#182229; --wa-note:#1d282f; --wa-note-ink:#ffd279; --wa-bar:#0b141a; --wa-input:#1f2c34; --wa-green:#00a884;
+  --sm-head:#1b1c1f; --sm-bg:#121316; --sm-in:#2b2d31; --sm-in-ink:#e3e3e3; --sm-out:#a8c7fa; --sm-out-ink:#062e6f; --sm-meta:#9aa0a6; --sm-bar:#121316; --sm-input:#2b2d31; --sm-ink:#e3e3e3; --sm-opt:#a8c7fa;
+  --gm-bg:#1f1f1f; --gm-ink:#e3e3e3; --gm-soft:#a8abb0; --gm-line:#3a3a3a; --gm-chip:#a8c7fa; --gm-chip-bg:#1f1f1f; --gm-me:#272a2e;
+  --nb-bg:rgba(44,48,52,.97); --nb-ink:#f1f1f1;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--backdrop);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg{display:block;flex:none}
+
+.shell{height:100%;display:grid;place-items:center}
+.device{position:relative;width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column;background:var(--wa-bg)}
+.fake-status{display:none}
+@media (min-width: 560px){
+  .shell{padding-block:22px}
+  .device{width:392px;height:min(100%,850px);border-radius:46px;border:11px solid var(--bezel);box-shadow:0 40px 90px rgba(10,20,30,.28),0 0 0 1px rgba(255,255,255,.06)}
+  .fake-status{display:flex;justify-content:space-between;align-items:center;padding:9px 24px 3px;font:600 13px var(--app);flex:none;position:relative}
+  .fake-status::after{content:"";position:absolute;left:50%;top:7px;width:84px;height:22px;margin-left:-42px;border-radius:12px;background:var(--bezel)}
+}
+.fake-status .ico{display:flex;gap:5px;align-items:center}
+#stage{flex:1 1 auto;min-height:0;position:relative;display:flex;flex-direction:column}
+.screen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;font-family:var(--app)}
+.screen[hidden]{display:none}
+
+/* ---------- shared chat chrome ---------- */
+.top{display:flex;align-items:center;gap:4px;padding:7px 6px 7px 2px;flex:none}
+.ib{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;flex:none;border:0;background:transparent;color:inherit;padding:0}
+.ib.tap:active{background:rgba(127,127,127,.18)}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:14px;flex:none;color:#fff;letter-spacing:.02em}
+.tt{flex:1 1 auto;min-width:0;padding-left:6px}
+.tt .n{font-size:16.5px;font-weight:500;display:flex;align-items:center;gap:4px;min-width:0}
+.tt .n span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tt .s{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .2s}
+.body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;padding:8px 12px 10px;scroll-behavior:smooth}
+.day{align-self:center;font-size:12px;padding:5px 11px;border-radius:8px;margin:10px 0 6px}
+.sys{align-self:center;text-align:center;font-size:12px;line-height:1.38;padding:6px 12px;border-radius:8px;margin:6px 10px;max-width:92%}
+.bar{display:flex;align-items:flex-end;gap:6px;padding:6px 6px 8px;flex:none}
+.bar form{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:6px}
+.bar input{flex:1 1 auto;min-width:0;border:0;background:transparent;outline:none;font-size:16px;padding:0}
+.typing{align-self:flex-start;padding:11px 13px;display:flex;gap:4px;margin-top:6px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8696a0;animation:blink 1.1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.enter{animation:rise .28s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ---------- WhatsApp ---------- */
+.wa{background:var(--wa-bg);color:var(--wa-ink)}
+.wa .top{background:var(--wa-head);color:var(--wa-head-ink)}
+.wa .tt .s{color:var(--wa-sub)}
+.wa .tt .s.live{color:var(--wa-green)}
+.wa .body{background-color:var(--wa-bg);background-image:radial-gradient(var(--wa-dot) 1.2px,transparent 1.6px);background-size:18px 18px}
+.wa .day{background:var(--wa-chip);color:var(--wa-sub);box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.wa .sys{background:var(--wa-note);color:var(--wa-note-ink)}
+.wa .msg{position:relative;max-width:82%;margin-top:6px;border-radius:9px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.wa .msg.cont{margin-top:2px}
+.wa .msg.in{align-self:flex-start;background:var(--wa-in)}
+.wa .msg.out{align-self:flex-end;background:var(--wa-out)}
+.wa .msg.in:not(.cont){border-top-left-radius:0}
+.wa .msg.out:not(.cont){border-top-right-radius:0}
+.wa .msg.in:not(.cont)::before,.wa .msg.out:not(.cont)::before{content:"";position:absolute;top:0;width:8px;height:12px}
+.wa .msg.in:not(.cont)::before{left:-7px;background:var(--wa-in);clip-path:polygon(100% 0,0 0,100% 100%)}
+.wa .msg.out:not(.cont)::before{right:-7px;background:var(--wa-out);clip-path:polygon(0 0,100% 0,0 100%)}
+.wa .tx{display:flow-root;padding:6px 8px 6px 9px;font-size:15px;line-height:1.38;white-space:pre-line;overflow-wrap:anywhere}
+.wa .tx b{font-weight:600}
+.wa .ft{display:block;font-size:12.5px;color:var(--wa-meta);margin-top:2px}
+.wa .mt{float:right;display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--wa-meta);margin:8px 0 -5px 12px;line-height:1}
+.wa .mt svg{color:var(--wa-tick)}
+.wa .btns{display:grid;border-top:1px solid var(--wa-sep)}
+.wa .btns button{border:0;background:transparent;color:var(--wa-link);padding:10px 8px;font:500 14.5px var(--app);display:flex;justify-content:center;align-items:center;gap:7px}
+.wa .btns button + button{border-top:1px solid var(--wa-sep)}
+.wa .btns.used button{opacity:.55;cursor:default}
+.wa .btns button:active{background:rgba(127,127,127,.12)}
+.wa .typing{background:var(--wa-in);border-radius:9px;border-top-left-radius:0;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+.wa .bar{background:var(--wa-bar)}
+.wa .bar form{background:var(--wa-input);border-radius:24px;padding:9px 10px;color:var(--wa-sub)}
+.wa .bar input{color:var(--wa-ink)}
+.wa .bar input::placeholder{color:var(--wa-sub)}
+.wa .send{width:46px;height:46px;border-radius:50%;background:var(--wa-green);color:#fff;display:grid;place-items:center;flex:none;border:0}
+
+/* ---------- Messages (SMS) ---------- */
+.sm{background:var(--sm-bg);color:var(--sm-ink)}
+.sm .top{background:var(--sm-head)}
+.sm .tt .s{color:var(--sm-meta)}
+.sm .day,.sm .sys{color:var(--sm-meta)}
+.sm .msg{max-width:80%;margin-top:6px;border-radius:20px}
+.sm .msg.cont{margin-top:2px}
+.sm .msg.in{align-self:flex-start;background:var(--sm-in);color:var(--sm-in-ink);border-bottom-left-radius:6px}
+.sm .msg.out{align-self:flex-end;background:var(--sm-out);color:var(--sm-out-ink);border-bottom-right-radius:6px}
+.sm .tx{padding:10px 14px;font-size:15.5px;line-height:1.4;white-space:pre-line;overflow-wrap:anywhere}
+.sm .tx b{font-weight:600}
+.sm .ft{display:block;font-size:13px;opacity:.75;margin-top:6px}
+.sm .mt{display:none}
+.sm .btns{display:grid;padding:0 14px 10px;gap:1px}
+.sm .btns button{border:0;background:transparent;padding:2px 0;text-align:left;font:15.5px/1.4 var(--app);color:var(--sm-in-ink)}
+.sm .btns button b{color:var(--sm-opt);font-weight:600}
+.sm .btns.used button{cursor:default}
+.sm .stamp{font-size:11.5px;color:var(--sm-meta);margin:3px 6px 2px}
+.sm .stamp.r{align-self:flex-end}
+.sm .typing{background:var(--sm-in);border-radius:20px}
+.sm .bar{background:var(--sm-bar);align-items:center}
+.sm .plus{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--sm-meta);flex:none}
+.sm .bar form{background:var(--sm-input);border-radius:24px;padding:11px 16px;color:var(--sm-meta)}
+.sm .bar input{color:var(--sm-ink)}
+.sm .bar input::placeholder{color:var(--sm-meta)}
+.sm .send{width:40px;height:40px;border:0;background:transparent;color:var(--sm-meta);display:grid;place-items:center;flex:none}
+
+/* ---------- Gmail ---------- */
+.gm{background:var(--gm-bg);color:var(--gm-ink)}
+.gm .top{background:var(--gm-bg);justify-content:space-between}
+.gm .top .grp{display:flex}
+.gm .body{padding:0}
+.gm .subject{padding:4px 18px 14px;font-size:21px;line-height:1.3;display:flex;gap:10px;align-items:flex-start}
+.gm .subject .lbl{font-size:11.5px;background:var(--gm-me);color:var(--gm-soft);padding:2px 6px;border-radius:4px;margin-top:6px;flex:none}
+.gm .msg{padding:12px 18px 16px;border-top:1px solid var(--gm-line)}
+.gm .msg.out{background:var(--gm-me)}
+.gm .from{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.gm .from .av{width:40px;height:40px}
+.gm .who{flex:1 1 auto;min-width:0}
+.gm .who b{font-weight:500;font-size:15px}
+.gm .who div{font-size:12.5px;color:var(--gm-soft)}
+.gm .when{font-size:12.5px;color:var(--gm-soft)}
+.gm .tx{font-size:15px;line-height:1.5;white-space:pre-line;overflow-wrap:anywhere}
+.gm .tx b{font-weight:600}
+.gm .ft{display:block;font-size:12px;color:var(--gm-soft);margin-top:14px}
+.gm .mt{display:none}
+.gm .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.gm .btns button{border:1px solid var(--gm-line);background:var(--gm-chip-bg);color:var(--gm-chip);border-radius:999px;padding:7px 14px;font:500 14px var(--app)}
+.gm .btns button.picked{background:var(--gm-chip);color:var(--gm-bg);border-color:var(--gm-chip)}
+.gm .btns.used button{cursor:default}
+.gm .btns.used button:not(.picked){opacity:.55}
+.gm .sys,.gm .day{color:var(--gm-soft)}
+.gm .typing{display:none}
+.gm .bar{background:var(--gm-bg);padding:10px 14px 12px;border-top:1px solid var(--gm-line);align-items:center}
+.gm .bar form{border:1px solid var(--gm-line);border-radius:999px;padding:9px 14px;color:var(--gm-soft)}
+.gm .bar input{color:var(--gm-ink)}
+.gm .bar input::placeholder{color:var(--gm-soft)}
+.gm .send{width:40px;height:40px;border:0;background:transparent;color:var(--gm-chip);display:grid;place-items:center;flex:none}
+
+/* ---------- notification ---------- */
+.banner{position:absolute;z-index:6;left:8px;right:8px;top:6px;border-radius:22px;padding:12px 14px 13px;border:0;text-align:left;
+  background:var(--nb-bg);color:var(--nb-ink);box-shadow:0 14px 34px rgba(0,0,0,.25);display:grid;gap:2px;font-family:var(--app);
+  animation:drop .5s cubic-bezier(.2,.9,.3,1.15) both}
+.banner .h{display:flex;align-items:center;gap:7px;font-size:12px;opacity:.72}
+.banner .h i{width:18px;height:18px;border-radius:5px;background:#25d366;display:grid;place-items:center}
+.banner .x{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(127,127,127,.18);color:inherit}
+.banner .x:active{background:rgba(127,127,127,.32)}
+.banner{padding-right:46px}
+.banner b{font-size:14.5px;font-weight:600;margin-top:3px}
+.banner span.t{font-size:14px;line-height:1.36}
+@keyframes drop{from{transform:translateY(-130%)}to{transform:none}}
+.who-chip{position:absolute;z-index:5;left:50%;bottom:78px;transform:translateX(-50%);background:rgba(17,27,33,.84);color:#fff;
+  font:600 12.5px var(--body);padding:6px 12px;border-radius:999px;pointer-events:none;white-space:nowrap;animation:chip 2.4s ease both}
+@keyframes chip{0%{opacity:0;transform:translate(-50%,6px)}12%,78%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+
+/* ---------- quotes and results cards ---------- */
+.card{flex:1 1 auto;min-height:0;overflow-y:auto;background:var(--card);color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:20px;
+  padding-block:28px;padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(22px,env(safe-area-inset-right,0px))}
+.card[hidden]{display:none}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+.card h1{margin:0;font-family:var(--display);font-weight:700;font-size:28px;line-height:1.12;text-wrap:balance}
+.card p{margin:0;color:var(--ink-soft);font-size:15.5px;line-height:1.5}
+.quotes{display:grid;border-top:1px solid var(--line)}
+.q{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.q b{font-weight:700;font-size:15px}
+.q .job{color:var(--ink-soft);font-size:13.5px}
+.q .amt{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.q .tag{font-size:11.5px;font-weight:700;color:var(--warm);text-align:right}
+.big{font-family:var(--display);font-weight:700;font-size:58px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.stats{display:grid;border-top:1px solid var(--line)}
+.stats div{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--ink-soft)}
+.stats b{color:var(--ink);font-size:17px;font-variant-numeric:tabular-nums}
+.fine{font-size:12px;color:var(--ink-soft)}
+.back-demo{align-self:flex-start;border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 14px;font-weight:700;font-size:13.5px}
+
+@media (prefers-reduced-motion: reduce){.enter,.banner,.who-chip{animation:none}.body{scroll-behavior:auto}}
+
+/* ---------- edge tab and settings sheet ---------- */
+.tab{position:fixed;z-index:20;right:env(safe-area-inset-right,0px);top:40%;width:20px;height:52px;padding:0;border-radius:12px 0 0 12px;border:0;
+  background:rgba(17,27,33,.5);color:#fff;display:grid;place-items:center;opacity:.4;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.tab:hover{opacity:1}
+.tab.gone{display:none}
+.scrim{position:fixed;inset:0;z-index:30;background:var(--scrim)}
+.sheet{position:fixed;z-index:31;left:0;right:0;bottom:0;margin:0 auto;width:min(440px,100%);max-height:90%;overflow-y:auto;
+  background:var(--sheet);color:var(--ink);border-radius:22px 22px 0 0;
+  padding-block:10px calc(18px + env(safe-area-inset-bottom,0px));
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));
+  display:grid;gap:14px;box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:up .25s ease both}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.grab{width:38px;height:4px;border-radius:4px;background:var(--line);justify-self:center}
+.sheet h2{margin:0;font-family:var(--display);font-size:18px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sheet label,.lab{display:grid;gap:5px;font-size:12px;font-weight:700;color:var(--ink-soft);min-width:0}
+.sheet input,.sheet select{border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:var(--field);font-size:15px;width:100%;min-width:0;font-weight:500}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--field);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:8px 4px;font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+.seg button[aria-pressed="true"]{background:var(--sheet);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.check{display:flex !important;grid-template-columns:none;align-items:center;gap:10px;font-size:14px !important;color:var(--ink) !important;font-weight:600 !important}
+.check input{width:20px;height:20px;accent-color:var(--accent)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ghost{border:1px solid var(--line);background:transparent;border-radius:12px;padding:11px 6px;font-size:13.5px;font-weight:700}
+.done{border:0;background:var(--accent);color:#fff;border-radius:12px;padding:12px;font-weight:700;font-size:15px}
+:root[data-theme="dark"] .done{color:#0b1013}
+.help{margin:0;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+</style>
+
+<div class="shell">
+  <div class="device" id="device">
+    <div class="fake-status" id="fakeStatus"><span id="clock">10:02</span><span class="ico">
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.3" y="5" width="3" height="6" rx="1"/><rect x="8.6" y="2.5" width="3" height="8.5" rx="1"/><rect x="12.9" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor"><rect x=".5" y=".5" width="20" height="11" rx="3" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.5" fill="currentColor" stroke="none"/><path d="M22.5 4v4" stroke-linecap="round"/></svg>
+    </span></div>
+    <div id="stage"></div>
+  </div>
+</div>
+
+<button class="tab" id="tab" type="button" aria-label="Open demo settings"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+<div class="scrim" id="scrim" hidden></div>
+<form class="sheet" id="sheet" hidden>
+  <div class="grab"></div>
+  <div class="lab">Show
+    <div class="seg" id="segView" role="group" aria-label="Show">
+      <button type="button" data-v="demo">Live demo</button><button type="button" data-v="quotes">Old quotes</button><button type="button" data-v="results">What it's worth</button>
+    </div>
+  </div>
+  <div class="lab">Screen
+    <div class="seg" id="segTheme" role="group" aria-label="Screen">
+      <button type="button" data-t="light">Light</button><button type="button" data-t="dark">Dark</button><button type="button" data-t="system">Phone setting</button>
+    </div>
+  </div>
+  <div class="lab">Channel
+    <div class="seg" id="segCh" role="group" aria-label="Channel">
+      <button type="button" data-ch="wa">WhatsApp</button><button type="button" data-ch="sms">SMS</button><button type="button" data-ch="mail">Email</button>
+    </div>
+  </div>
+  <h2>The business</h2>
+  <label for="fBiz">Business name<input id="fBiz" autocomplete="off"></label>
+  <div class="row2">
+    <label for="fOwner">Owner's first name<input id="fOwner" autocomplete="off"></label>
+    <label for="fTrade">Trade<select id="fTrade"></select></label>
+  </div>
+  <div class="row2">
+    <label for="fQuotes">Quotes gone quiet<input id="fQuotes" type="number" inputmode="numeric" min="1"></label>
+    <label for="fAvg">Average job (£)<input id="fAvg" type="number" inputmode="numeric" min="100" step="50"></label>
+  </div>
+  <h2>The customers</h2>
+  <div class="row2">
+    <label for="fAJob">Sarah's job<input id="fAJob" autocomplete="off"></label>
+    <label for="fAPrice">Sarah's quote (£)<input id="fAPrice" type="number" inputmode="numeric" min="1"></label>
+  </div>
+  <div class="row2">
+    <label for="fBJob">Tom's job<input id="fBJob" autocomplete="off"></label>
+    <label for="fBPrice">Tom's quote (£)<input id="fBPrice" type="number" inputmode="numeric" min="1"></label>
+  </div>
+  <p class="help">Leave these blank to use the example jobs for the trade, shown in grey.</p>
+  <label class="check" for="fNever"><input type="checkbox" id="fNever">Tom never replies</label>
+  <label class="check" for="fSound"><input type="checkbox" id="fSound">Notification sound</label>
+  <div class="acts">
+    <button type="button" class="ghost" id="bRestart">Restart demo</button>
+    <button type="button" class="ghost" id="bHide">Hide this tab</button>
+  </div>
+  <p class="help">Tap the customer's reply buttons to move the chat on, or type a message as the customer and the assistant answers. When the notification drops in, tap it to see the owner's phone, then tap the back arrow for the next customer. Press S to reopen these settings on a computer, or press and hold the top of the screen on a phone.</p>
+  <button class="done" type="submit">Save and restart</button>
+</form>
+
+<script>
+(function(){
+"use strict";
+
+var TRADES = {
+  windows:   {label:"Windows and doors", a:"new composite front door", aP:2350, aM:"March", b:"replacement windows", bP:6800, bM:"June", avg:4200, extra:[["Priya Shah","French doors",3900,"April"],["Mark Ellis","uPVC windows, 6 frames",5150,"May"]]},
+  roofing:   {label:"Roofing", a:"roof repair and new guttering", aP:3200, aM:"March", b:"full roof replacement", bP:9500, bM:"June", avg:5500, extra:[["Priya Shah","flat roof replacement",4600,"April"],["Mark Ellis","chimney repointing",1850,"May"]]},
+  kitchens:  {label:"Kitchens", a:"new kitchen", aP:11800, aM:"March", b:"worktops and splashback", bP:3400, bM:"June", avg:9000, extra:[["Priya Shah","kitchen island",6200,"April"],["Mark Ellis","full kitchen refit",14500,"May"]]},
+  bathrooms: {label:"Bathrooms", a:"bathroom refit", aP:7400, aM:"March", b:"shower room conversion", bP:4900, bM:"June", avg:6500, extra:[["Priya Shah","en suite fit",5800,"April"],["Mark Ellis","bathroom tiling",2300,"May"]]},
+  conserv:   {label:"Conservatories", a:"conservatory roof replacement", aP:8200, aM:"March", b:"orangery extension", bP:24500, bM:"June", avg:14000, extra:[["Priya Shah","conservatory glazing",3700,"April"],["Mark Ellis","new conservatory",18900,"May"]]},
+  solar:     {label:"Solar and batteries", a:"solar panels with a battery", aP:9600, aM:"March", b:"battery storage", bP:4200, bM:"June", avg:8000, extra:[["Priya Shah","12 panel solar system",7400,"April"],["Mark Ellis","battery upgrade",3900,"May"]]},
+  heat:      {label:"Heat pumps", a:"air source heat pump", aP:11500, aM:"March", b:"heat pump and new radiators", bP:13900, bM:"June", avg:11000, extra:[["Priya Shah","hot water cylinder upgrade",2800,"April"],["Mark Ellis","air source heat pump",10900,"May"]]},
+  driveways: {label:"Driveways", a:"resin driveway", aP:6300, aM:"March", b:"block paving and drainage", bP:8900, bM:"June", avg:7000, extra:[["Priya Shah","patio and steps",4400,"April"],["Mark Ellis","tarmac driveway",5600,"May"]]}
+};
+var DEFAULTS = {biz:"Brightview Windows", owner:"Dave", trade:"windows", quotes:214, avg:4200, never:false, sound:true, channel:"wa", theme:"system", aJob:"", aPrice:"", bJob:"", bPrice:""};
+/* The trade's example jobs, with any job or price typed into settings taking their place */
+function TR(){
+  var t = Object.assign({}, TRADES[S.trade]);
+  if(S.aJob) t.a = S.aJob; if(S.bJob) t.b = S.bJob;
+  if(+S.aPrice > 0) t.aP = +S.aPrice; if(+S.bPrice > 0) t.bP = +S.bPrice;
+  return t;
+}
+var KEY = "quote-demo-settings-v3";
+var PEOPLE = {A:{name:"Sarah Mitchell", first:"Sarah", color:"#c2185b"}, B:{name:"Tom Harris", first:"Tom", color:"#00796b"}};
+var YES = "Yes, let's talk", LATER = "Not ready yet", SORTED = "Already sorted";
+var OPEN = [YES, LATER, SORTED];
+var BUDGET = ["Yes, about the same","A little lower now","I can go higher"];
+var TIMING = ["Within a month","In 1 to 3 months","Later this year"];
+var CALLS = ["Tomorrow morning","Tomorrow afternoon","Later this week"];
+var CALL_TEXT = {"Tomorrow morning":"tomorrow between 9 and 11am","Tomorrow afternoon":"tomorrow between 2 and 4pm","Later this week":"on Thursday afternoon"};
+var DELAY = 1500;
+
+var S = load();
+var R; /* run state, rebuilt on restart */
+var timers = [];
+
+function load(){ var s = Object.assign({}, DEFAULTS); try{ var r = localStorage.getItem(KEY); if(r) Object.assign(s, JSON.parse(r)); }catch(e){} if(!TRADES[s.trade]) s.trade = "windows"; return s; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function gbp(n){ return "£" + Math.round(n).toLocaleString("en-GB"); }
+function ini(t){ var w = String(t||"").trim().split(/\s+/); return ((w[0]||"?")[0] + ((w[1]||"")[0]||"")).toUpperCase(); }
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function el(tag, cls, text){ var e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function ic(name){ var t = document.createElement("template"); t.innerHTML = IC[name].trim(); return t.content.firstChild; }
+function later(fn, ms){ var id = setTimeout(fn, ms); timers.push(id); return id; }
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+
+var IC = {
+  back:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>',
+  video:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="6.5" width="12.5" height="11" rx="2.5"/><path d="M15.5 10.5l5-3v9l-5-3z"/></svg>',
+  call:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>',
+  dots:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>',
+  smile:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></svg>',
+  clip:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg>',
+  cam:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  send:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.9.9 0 0 0-1.3 1l1.9 6.4 9 1-9 1-1.9 6.4a.9.9 0 0 0 1.3 1z"/></svg>',
+  plus:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  ticks:'<svg width="17" height="11" viewBox="0 0 17 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6l3 3 6-7M7 8.5l.8.5 6-7"/></svg>',
+  reply:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8L5 13l5 5"/><path d="M5 13h9a5 5 0 0 0 5-5V6"/></svg>',
+  badge:'<svg width="16" height="16" viewBox="0 0 24 24"><path fill="#25d366" d="M12 1.5l2.6 1.9 3.2-.2 1 3.1 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3.1-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3.1L2.6 15.8l1-3.1-1-3.1 2.6-1.9 1-3.1 3.2.2z"/><path d="M8 12.2l2.6 2.6L16.2 9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  archive:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10h14v-10M10 12h4"/></svg>',
+  bin:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  mail:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>',
+  wa:'<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>'
+};
+
+/* ---------- screens ---------- */
+var stage = document.getElementById("stage");
+
+function mkScreen(key){
+  var isOwner = key === "O";
+  var mode = isOwner ? "wa" : S.channel;
+  var sc = el("div","screen " + (mode === "wa" ? "wa" : mode === "sms" ? "sm" : "gm"));
+  sc.hidden = true;
+  var top = el("div","top");
+  var backBtn = el("button","ib tap"); backBtn.type = "button"; backBtn.setAttribute("aria-label","Back"); backBtn.appendChild(ic("back"));
+  backBtn.addEventListener("click", function(){ onBack(key); });
+  var sub = null;
+  if(mode === "mail"){
+    var l = el("div","grp"), r = el("div","grp"); l.appendChild(backBtn);
+    ["archive","bin","mail","dots"].forEach(function(x){ var i = el("div","ib"); i.appendChild(ic(x)); r.appendChild(i); });
+    top.appendChild(l); top.appendChild(r);
+  } else {
+    top.appendChild(backBtn);
+    var av = el("div","av", isOwner ? "LA" : ini(S.biz)); av.style.background = isOwner ? "#1f5f8b" : mode === "wa" ? "#25a35a" : "#7b5ea7";
+    top.appendChild(av);
+    var tt = el("div","tt"), n = el("div","n"); n.appendChild(el("span", null, isOwner ? "Lead Alerts" : S.biz));
+    if(mode === "wa" && !isOwner) n.appendChild(ic("badge"));
+    tt.appendChild(n);
+    sub = el("div","s", mode === "wa" ? (isOwner ? "Automated alerts" : "Business account") : "Text message");
+    tt.appendChild(sub); top.appendChild(tt);
+    (mode === "wa" ? ["video","call","dots"] : ["call","dots"]).forEach(function(x){ var i = el("div","ib"); i.appendChild(ic(x)); top.appendChild(i); });
+  }
+  var body = el("div","body");
+  if(mode === "mail"){
+    var subj = el("div","subject"); subj.appendChild(el("span", null, "Your " + (key === "A" ? TR().a : TR().b) + " quote")); subj.appendChild(el("span","lbl","Inbox")); body.appendChild(subj);
+  }
+  if(mode === "wa") body.appendChild(el("div","sys", isOwner ? "Alerts for " + S.biz + ". Replies to your old quotes arrive here." : "This business uses a secure service from Meta to manage this chat. Tap to learn more."));
+  var bar = el("div","bar"), form = el("form"), input = el("input");
+  input.type = "text"; input.autocomplete = "off"; input.enterKeyHint = "send";
+  input.placeholder = mode === "wa" ? "Message" : mode === "sms" ? "Text message" : "Reply to " + (isOwner ? "" : S.owner);
+  if(mode === "wa"){ form.appendChild(ic("smile")); form.appendChild(input); form.appendChild(ic("clip")); form.appendChild(ic("cam")); }
+  else form.appendChild(input);
+  var send = el("button","send"); send.type = "submit"; send.setAttribute("aria-label","Send"); send.appendChild(ic("send"));
+  if(mode === "sms"){ var p = el("div","plus"); p.appendChild(ic("plus")); bar.appendChild(p); }
+  bar.appendChild(form);
+  if(mode === "wa"){ form.appendChild(send); send.style.display = "none"; var big = el("button","send"); big.type = "button"; big.appendChild(ic("send")); big.setAttribute("aria-label","Send"); big.addEventListener("click", function(){ submitText(); }); bar.appendChild(big); }
+  else bar.appendChild(send);
+  function submitText(){ var v = input.value.trim(); if(!v) return; input.value = ""; typed(key, v); }
+  form.addEventListener("submit", function(e){ e.preventDefault(); submitText(); });
+  if(mode !== "wa") send.addEventListener("click", function(e){ e.preventDefault(); submitText(); });
+  sc.appendChild(top); sc.appendChild(body); sc.appendChild(bar);
+  return {el:sc, body:body, sub:sub, mode:mode, key:key, last:null, clock:{h:10, m:key === "A" ? 2 : 4}};
+}
+
+function stamp(c){ var s = String(c.h).padStart(2,"0") + ":" + String(c.m).padStart(2,"0"); c.m += 1; if(c.m >= 60){ c.m -= 60; c.h += 1; } return s; }
+function setClock(c, h, m){ c.h = h; c.m = m; }
+function toEnd(b){ requestAnimationFrame(function(){ b.scrollTop = b.scrollHeight; }); }
+
+function addDay(sc, text){ sc.body.appendChild(el("div","day", text)); sc.last = null; toEnd(sc.body); }
+function addSys(sc, text){ var d = el("div","sys", text); d.classList.add("enter"); sc.body.appendChild(d); sc.last = null; toEnd(sc.body); }
+
+/* A message bubble. dir "in" is from the business (or alerts), "out" is from the phone's owner. */
+function bubble(sc, dir, o){
+  var time = o.time || stamp(sc.clock);
+  var mode = sc.mode;
+  var m = el("div","msg " + dir);
+  if(sc.last === dir && mode !== "mail") m.classList.add("cont");
+  sc.last = dir;
+  if(mode === "mail"){
+    var who = sc.key === "A" || sc.key === "B" ? PEOPLE[sc.key] : null;
+    var f = el("div","from"), av = el("div","av", dir === "in" ? ini(S.biz) : ini(who ? who.name : S.owner));
+    av.style.background = dir === "in" ? "#1a73e8" : "#e8710a"; f.appendChild(av);
+    var w = el("div","who"); w.appendChild(el("b", null, dir === "in" ? S.owner + " at " + S.biz : "me"));
+    w.appendChild(el("div", null, dir === "in" ? "to me" : "to " + S.biz)); f.appendChild(w);
+    f.appendChild(el("div","when", time)); m.appendChild(f);
+  }
+  var tx = el("div","tx");
+  if(o.bold){ tx.appendChild(el("b", null, o.bold)); tx.appendChild(document.createTextNode("\n")); }
+  tx.appendChild(document.createTextNode(o.text));
+  if(o.optout) tx.appendChild(el("span","ft", mode === "mail" ? "You're getting this because you asked " + S.biz + " for a quote. Unsubscribe" : "Reply STOP to opt out"));
+  var mt = el("span","mt", time); if(dir === "out") mt.appendChild(ic("ticks")); tx.appendChild(mt);
+  m.appendChild(tx);
+  if(o.buttons){
+    var box = el("div","btns");
+    o.buttons.forEach(function(b, i){
+      var btn = el("button"); btn.type = "button";
+      if(mode === "wa"){ btn.appendChild(ic("reply")); btn.appendChild(document.createTextNode(b)); }
+      else if(mode === "sms"){ btn.appendChild(document.createTextNode("Reply ")); btn.appendChild(el("b", null, String(i+1))); btn.appendChild(document.createTextNode(" for " + b)); }
+      else btn.textContent = b;
+      if(o.inert){ btn.disabled = true; }
+      else btn.addEventListener("click", function(){ if(box.classList.contains("used")) return; tapped(sc.key, b, box, btn); });
+      box.appendChild(btn);
+    });
+    if(o.inert) box.classList.add("used");
+    if(mode === "wa") m.appendChild(box); else if(mode === "sms") m.appendChild(box); else tx.appendChild(box);
+    if(!o.inert) R.live[sc.key] = {box:box, buttons:o.buttons, kind:o.kind};
+  }
+  m.classList.add("enter");
+  sc.body.appendChild(m);
+  if(mode === "sms") sc.body.appendChild(el("div","stamp" + (dir === "out" ? " r" : ""), dir === "out" ? time + " · Delivered" : time));
+  toEnd(sc.body);
+  return m;
+}
+
+/* The business types for a moment, then the message lands */
+function bizSay(key, o, done){
+  var sc = R.sc[key];
+  R.busy[key] = true;
+  var ty = null;
+  if(sc.mode !== "mail"){ ty = el("div","typing"); ty.appendChild(el("i")); ty.appendChild(el("i")); ty.appendChild(el("i")); ty.classList.add("enter"); sc.body.appendChild(ty); toEnd(sc.body); }
+  if(sc.sub && sc.mode === "wa"){ sc.sub.textContent = "typing…"; sc.sub.classList.add("live"); }
+  later(function(){
+    if(ty) ty.remove();
+    if(sc.sub && sc.mode === "wa"){ sc.sub.textContent = key === "O" ? "Automated alerts" : "online"; sc.sub.classList.remove("live"); }
+    bubble(sc, "in", o);
+    R.busy[key] = false;
+    if(done) done();
+  }, o.delay || DELAY);
+}
+function custSay(key, text){ bubble(R.sc[key], "out", {text:text}); }
+
+/* ---------- the conversation logic ---------- */
+function retire(key){ var lv = R.live[key]; if(lv){ lv.box.classList.add("used"); lv.box.querySelectorAll("button").forEach(function(b){ b.disabled = true; }); R.live[key] = null; } }
+
+function tapped(key, label, box, btn){
+  var lv = R.live[key];
+  if(!lv || lv.box !== box || R.busy[key]) return;
+  btn.classList.add("picked");
+  var sc = R.sc[key];
+  retire(key);
+  custSay(key, sc.mode === "sms" ? String(lv.buttons.indexOf(label) + 1) : label);
+  answer(key, lv.kind, label);
+}
+
+function answer(key, kind, label){
+  var T = TR(), p = PEOPLE[key], own = S.owner;
+  if(key === "B") clearTimers();
+  if(kind === "open"){
+    if(label === YES){
+      if(key === "A") bizSay(key, {text:"Great to hear, " + p.first + ". Two quick questions so " + own + " has everything ready. Is your budget still around " + gbp(T.aP) + "?", buttons:BUDGET, kind:"budget"});
+      else bizSay(key, {text:"Great, " + p.first + ". When suits you for a short call with " + own + "?", buttons:CALLS, kind:"call"});
+    } else if(label === LATER){
+      bizSay(key, {text:"No problem at all, " + p.first + ". We won't message you again about this quote. If anything changes, just reply here."}, function(){ finish(key, "later"); });
+    } else {
+      bizSay(key, {text:"Thanks for letting us know, " + p.first + ". We hope it all goes well. If you ever need us, just reply here."}, function(){ finish(key, "sorted"); });
+    }
+  } else if(kind === "budget"){
+    R.ans[key].budget = label;
+    bizSay(key, {text:"Thank you. When would you like the work done?", buttons:TIMING, kind:"timing"});
+  } else if(kind === "timing"){
+    R.ans[key].timing = label;
+    bizSay(key, {text:"Perfect. When suits you for a short call with " + own + "?", buttons:CALLS, kind:"call"});
+  } else if(kind === "call"){
+    R.ans[key].call = label;
+    bizSay(key, {text:"Booked. " + own + " will call you " + CALL_TEXT[label] + ". Thank you, " + p.first + "."}, function(){ finish(key, "booked"); });
+  }
+}
+
+/* Free text from the customer: the assistant reads it and answers. Scripted here, an AI in the real build. */
+function typed(key, text, shown){
+  if(key === "O"){ custSay("O", text); return; }
+  var sc = R.sc[key];
+  /* While the business is typing, hold the customer's message until the business has finished, so the order stays natural */
+  if(R.busy[key]){
+    var run = R.run;
+    setTimeout(function(){ if(R.run === run) typed(key, text, shown); }, 300);
+    return;
+  }
+  var T = TR(), p = PEOPLE[key], own = S.owner, t = text.toLowerCase();
+  var lv = R.live[key];
+  if(sc.mode === "sms" && lv && /^\s*[123]\s*$/.test(t)){
+    var label = lv.buttons[parseInt(t, 10) - 1];
+    retire(key); if(!shown) custSay(key, text.trim()); answer(key, lv.kind, label); return;
+  }
+  if(!shown) custSay(key, text);
+  if(key === "B") clearTimers();
+  var price = key === "A" ? T.aP : T.bP, job = key === "A" ? T.a : T.b;
+  if(R.done[key]){ bizSay(key, {text:"Thanks, " + p.first + ". I've passed your message to " + own + ", who will get back to you personally."}); notifyNote(key, text); return; }
+  if(/\b(stop|unsubscribe|remove me)\b/.test(t)){
+    retire(key);
+    bizSay(key, {text:"Done. You won't get any more messages from us about this quote."}, function(){ finish(key, "later"); });
+    return;
+  }
+  if(/(not (interested|now|ready)|no thanks|maybe later|next year|can't afford|cannot afford|too expensive)/.test(t)){
+    retire(key);
+    bizSay(key, {text:"Completely understood, " + p.first + ". We won't message you again about this quote. If anything changes, just reply here."}, function(){ finish(key, "later"); });
+    return;
+  }
+  if(/(went with|someone else|another company|already (done|had|got|sorted)|sorted it)/.test(t)){
+    retire(key);
+    bizSay(key, {text:"Thanks for letting us know, " + p.first + ". We hope it all goes well. If you ever need us, just reply here."}, function(){ finish(key, "sorted"); });
+    return;
+  }
+  if(/(price|cost|how much|cheaper|discount|£|quote)/.test(t)){
+    retire(key);
+    bizSay(key, {text:"Of course. Your quote was " + gbp(price) + " for your " + job + ". Material prices do move, so " + own + " will confirm today's figure on a quick call. When suits you?", buttons:CALLS, kind:"call"});
+    return;
+  }
+  if(/(when|how long|start|available|availability|wait)/.test(t)){
+    retire(key);
+    bizSay(key, {text:"Good question. " + own + " can give you the earliest start date on a short call. When suits you?", buttons:CALLS, kind:"call"});
+    return;
+  }
+  if(/^(yes|yeah|yep|sure|ok|okay|interested|call me|go ahead)\b/.test(t.trim())){
+    retire(key); answer(key, "open", YES); return;
+  }
+  retire(key);
+  bizSay(key, {text:"Thanks, " + p.first + ". I've passed that to " + own + ", who will reply personally. In the meantime, would a quick call help?", buttons:CALLS, kind:"call"});
+}
+
+function notifyNote(key, text){
+  var p = PEOPLE[key];
+  R.ownerQueue.push({bold:"Message from " + p.name, text:"“" + text + "”"});
+  banner("Lead Alerts", p.first + " sent a message: " + text);
+}
+
+function finish(key, outcome){
+  R.done[key] = outcome;
+  var T = TR(), p = PEOPLE[key], a = R.ans[key];
+  var job = key === "A" ? T.a : T.b, price = key === "A" ? T.aP : T.bP, month = key === "A" ? T.aM : T.bM;
+  var item;
+  if(outcome === "booked"){
+    var lines = [p.name, cap(job) + ", quoted " + gbp(price) + " in " + month];
+    if(a.budget) lines.push("Budget: " + a.budget.toLowerCase().replace("yes, ",""));
+    if(a.timing) lines.push("Timing: " + a.timing.toLowerCase());
+    lines.push("Call booked: " + CALL_TEXT[a.call]);
+    item = {bold:"Warm lead", text:lines.join("\n"), buttons:["Call " + p.first + " now","Remind me before the call"]};
+    later(function(){ banner("Lead Alerts", "Warm lead: " + p.name + " wants a call " + CALL_TEXT[a.call]); }, 1100);
+  } else if(outcome === "later"){
+    item = {bold:"Not ready yet", text:p.name + ", " + job + "\nNo more messages will be sent."};
+    later(function(){ banner("Lead Alerts", p.name + " isn't ready yet. Follow up stopped."); }, 1100);
+  } else if(outcome === "sorted"){
+    item = {bold:"Quote closed", text:p.name + ", " + job + "\nWent with someone else. Marked as lost."};
+    later(function(){ banner("Lead Alerts", p.name + " went with someone else. Quote closed."); }, 1100);
+  } else {
+    item = {bold:"Closed quietly", text:p.name + ", " + job + "\nNo reply after two messages."};
+    later(function(){ banner("Lead Alerts", p.name + ": no reply after two messages. Closed quietly."); }, 1100);
+  }
+  R.ownerQueue.push(item);
+}
+
+/* ---------- scenes ---------- */
+function show(key){
+  Object.keys(R.sc).forEach(function(k){ R.sc[k].el.hidden = k !== key; });
+  R.scene = key;
+  var sc = R.sc[key];
+  var fs = document.getElementById("fakeStatus");
+  fs.style.background = sc.mode === "wa" ? "var(--wa-head)" : sc.mode === "sms" ? "var(--sm-head)" : "var(--gm-bg)";
+  fs.style.color = sc.mode === "wa" ? "var(--wa-head-ink)" : sc.mode === "sms" ? "var(--sm-ink)" : "var(--gm-ink)";
+  var old = stage.querySelector(".who-chip"); if(old) old.remove();
+  var chip = el("div","who-chip", key === "O" ? S.owner + "'s phone, the business owner" : PEOPLE[key].first + "'s phone, the customer");
+  stage.appendChild(chip);
+  toEnd(sc.body);
+}
+
+function banner(title, text){
+  var old = stage.querySelector(".banner"); if(old) old.remove();
+  chime();
+  var b = el("button","banner"); b.type = "button";
+  var h = el("div","h"), i = el("i"); i.appendChild(ic("wa")); h.appendChild(i); h.appendChild(el("span", null, "WhatsApp · now"));
+  b.appendChild(h); b.appendChild(el("b", null, title)); b.appendChild(el("span","t", text));
+  var x = el("span","x"); x.setAttribute("role","button"); x.setAttribute("aria-label","Dismiss notification");
+  x.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  x.addEventListener("click", function(e){ e.stopPropagation(); b.remove(); });
+  b.appendChild(x);
+  b.addEventListener("click", function(){ b.remove(); openOwner(); });
+  stage.appendChild(b);
+}
+
+function openOwner(){
+  var o = R.sc.O;
+  if(!R.ownerStarted){ addDay(o, "Monday"); R.ownerStarted = true; }
+  if(R.done.B && !R.ownerWed){ addDay(o, S.never ? "Friday" : "Wednesday"); R.ownerWed = true; setClock(o.clock, 18, 32); }
+  else if(!R.done.B) setClock(o.clock, 10, 12);
+  var q = R.ownerQueue.splice(0);
+  q.forEach(function(it){ it.inert = true; bubble(o, "in", it); });
+  show("O");
+  if(R.done.A && R.done.B && !R.summaryShown){
+    R.summaryShown = true;
+    var booked = (R.done.A === "booked" ? 1 : 0) + (R.done.B === "booked" ? 1 : 0);
+    later(function(){
+      setClock(o.clock, 19, 0);
+      bizSay("O", {bold:"Today's summary for " + S.biz, text:"Old quotes messaged: 38\nReplies: 7\nCalls booked: " + (booked + 1) + "\nNot ready or closed: 3"});
+    }, 900);
+  }
+}
+
+function onBack(key){
+  if(key === "O"){
+    if(!R.bStarted && R.done.A) startTom();
+    else if(R.done.A && R.done.B) switchView("results");
+    else show(R.bStarted ? "B" : "A");
+  }
+}
+
+function startSarah(){
+  addDay(R.sc.A, "Monday");
+  var T = TR();
+  later(function(){
+    bizSay("A", {text:"Hi Sarah, it's " + S.owner + " from " + S.biz + ". In " + T.aM + " we quoted " + gbp(T.aP) + " for your " + T.a + ". Is it still something you're considering?", buttons:OPEN, kind:"open", optout:true});
+  }, 500);
+}
+
+function startTom(){
+  R.bStarted = true;
+  var T = TR(), sc = R.sc.B;
+  addDay(sc, "Monday");
+  show("B");
+  later(function(){
+    bizSay("B", {text:"Hi Tom, it's " + S.owner + " from " + S.biz + ". In " + T.bM + " we quoted " + gbp(T.bP) + " for your " + T.b + ". Is it still something you're considering?", buttons:OPEN, kind:"open", optout:true}, function(){
+      later(function(){
+        if(R.done.B || R.busy.B) return;
+        retire("B");
+        addDay(sc, "Wednesday"); setClock(sc.clock, 10, 4);
+        bizSay("B", {text:"Hi Tom, just a gentle follow up on your " + T.b + " quote. If the timing isn't right, that's completely fine. Would a quick chat help?", buttons:OPEN, kind:"open", optout:true}, function(){
+          setClock(sc.clock, 18, 31);
+          if(S.never){
+            later(function(){ if(R.done.B) return; retire("B"); addDay(sc, "Friday"); addSys(sc, "No reply after two messages. No more messages will be sent about this quote."); finish("B", "none"); }, 3200);
+          }
+        });
+      }, 3200);
+    });
+  }, 900);
+}
+
+/* ---------- quotes and results cards ---------- */
+var view = "demo";
+function switchView(v){
+  view = v;
+  R.cards.quotes.hidden = v !== "quotes";
+  R.cards.results.hidden = v !== "results";
+  Object.keys(R.sc).forEach(function(k){ R.sc[k].el.hidden = v !== "demo" || k !== R.scene; });
+  var bn = stage.querySelector(".banner"); if(bn) bn.hidden = v !== "demo";
+  var fs = document.getElementById("fakeStatus");
+  if(v !== "demo"){ fs.style.background = "var(--card)"; fs.style.color = "var(--ink)"; } else show(R.scene);
+  paintSeg("segView", "v", v);
+}
+function quotesCard(){
+  var T = TR(), c = el("div","card");
+  c.appendChild(el("div","eyebrow", S.biz + " · " + T.label));
+  c.appendChild(el("h1", null, S.quotes + " quotes went quiet. Each one is a customer who already asked you for a price."));
+  var list = el("div","quotes");
+  [[PEOPLE.A.name, T.a, T.aP, T.aM],[PEOPLE.B.name, T.b, T.bP, T.bM]].concat(T.extra).forEach(function(r){
+    var q = el("div","q"); q.appendChild(el("b", null, r[0])); q.appendChild(el("div","amt", gbp(r[2])));
+    q.appendChild(el("div","job", cap(r[1]) + " · " + r[3])); q.appendChild(el("div","tag","No follow up"));
+    list.appendChild(q);
+  });
+  c.appendChild(list);
+  c.appendChild(el("p", null, "Each one gets a polite follow up, in your name, on the channel your customers already use."));
+  var b = el("button","back-demo","Back to the live demo"); b.type = "button"; b.addEventListener("click", function(){ switchView("demo"); }); c.appendChild(b);
+  return c;
+}
+function resultsCard(){
+  var c = el("div","card"), jobs = Math.max(1, Math.round(S.quotes / 20));
+  c.appendChild(el("div","eyebrow","If just 1 in 20 old quotes comes back"));
+  c.appendChild(el("div","big", gbp(jobs * S.avg)));
+  c.appendChild(el("h1", null, "About " + jobs + " extra jobs for " + S.biz + ", from quotes you already sent."));
+  var s = el("div","stats");
+  [["Old quotes followed up", String(S.quotes)],["Jobs if 1 in 20 comes back", String(jobs)],["Average job value", gbp(S.avg)]].forEach(function(p){
+    var d = el("div"); d.appendChild(el("span", null, p[0])); d.appendChild(el("b", null, p[1])); s.appendChild(d);
+  });
+  c.appendChild(s);
+  c.appendChild(el("p", null, "From then on, every new quote gets the same follow up automatically, so none go quiet again."));
+  c.appendChild(el("div","fine","Names and figures in this demo are examples. Your results depend on your own quotes."));
+  var b = el("button","back-demo","Back to the live demo"); b.type = "button"; b.addEventListener("click", function(){ switchView("demo"); }); c.appendChild(b);
+  return c;
+}
+
+/* ---------- start ---------- */
+function restart(){
+  clearTimers();
+  stage.replaceChildren();
+  R = {run:Math.random(), sc:{}, live:{A:null,B:null,O:null}, busy:{A:false,B:false,O:false}, ans:{A:{},B:{}}, done:{A:null,B:null}, ownerQueue:[], scene:"A", cards:{}};
+  ["A","B","O"].forEach(function(k){ R.sc[k] = mkScreen(k); stage.appendChild(R.sc[k].el); });
+  R.cards.quotes = quotesCard(); R.cards.results = resultsCard();
+  R.cards.quotes.hidden = true; R.cards.results.hidden = true;
+  stage.appendChild(R.cards.quotes); stage.appendChild(R.cards.results);
+  view = "demo"; paintSeg("segView", "v", "demo");
+  show("A");
+  var chip = stage.querySelector(".who-chip"); if(chip) chip.remove();
+  startSarah();
+}
+
+/* ---------- theme ---------- */
+function applyTheme(){
+  if(S.theme === "light" || S.theme === "dark") document.documentElement.setAttribute("data-theme", S.theme);
+  else document.documentElement.removeAttribute("data-theme");
+  paintSeg("segTheme", "t", S.theme);
+}
+
+/* ---------- settings sheet ---------- */
+var sheet = document.getElementById("sheet"), scrim = document.getElementById("scrim"), tab = document.getElementById("tab"), tradeSel = document.getElementById("fTrade");
+Object.keys(TRADES).forEach(function(k){ var o = el("option", null, TRADES[k].label); o.value = k; tradeSel.appendChild(o); });
+function paintSeg(id, attr, val){ document.getElementById(id).querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset[attr] === val)); }); }
+function syncForm(){
+  document.getElementById("fBiz").value = S.biz; document.getElementById("fOwner").value = S.owner;
+  tradeSel.value = S.trade; document.getElementById("fQuotes").value = S.quotes; document.getElementById("fAvg").value = S.avg;
+  document.getElementById("fNever").checked = !!S.never;
+  ["aJob","aPrice","bJob","bPrice"].forEach(function(k){ document.getElementById("f" + k.charAt(0).toUpperCase() + k.slice(1)).value = S[k] || ""; });
+  customerHints(S.trade);
+  paintSeg("segCh", "ch", S.channel); paintSeg("segTheme", "t", S.theme); paintSeg("segView", "v", view);
+}
+function openSheet(){ syncForm(); sheet.hidden = false; scrim.hidden = false; }
+function closeSheet(){ sheet.hidden = true; scrim.hidden = true; }
+tab.addEventListener("click", openSheet);
+scrim.addEventListener("click", closeSheet);
+document.getElementById("segView").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ switchView(b.dataset.v); closeSheet(); }); });
+document.getElementById("segTheme").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ S.theme = b.dataset.t; save(); applyTheme(); }); });
+document.getElementById("segCh").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ S.channel = b.dataset.ch; save(); paintSeg("segCh","ch",S.channel); closeSheet(); restart(); }); });
+function customerHints(trade){
+  var t = TRADES[trade];
+  document.getElementById("fAJob").placeholder = t.a; document.getElementById("fAPrice").placeholder = String(t.aP);
+  document.getElementById("fBJob").placeholder = t.b; document.getElementById("fBPrice").placeholder = String(t.bP);
+}
+tradeSel.addEventListener("change", function(){
+  document.getElementById("fAvg").value = TRADES[tradeSel.value].avg;
+  ["fAJob","fAPrice","fBJob","fBPrice"].forEach(function(id){ document.getElementById(id).value = ""; });
+  customerHints(tradeSel.value);
+});
+document.getElementById("bRestart").addEventListener("click", function(){ closeSheet(); restart(); });
+document.getElementById("bHide").addEventListener("click", function(){ tab.classList.add("gone"); closeSheet(); });
+sheet.addEventListener("submit", function(e){
+  e.preventDefault();
+  S.biz = document.getElementById("fBiz").value.trim() || DEFAULTS.biz;
+  S.owner = document.getElementById("fOwner").value.trim() || DEFAULTS.owner;
+  S.trade = tradeSel.value;
+  S.quotes = Math.max(1, parseInt(document.getElementById("fQuotes").value, 10) || DEFAULTS.quotes);
+  S.avg = Math.max(100, parseInt(document.getElementById("fAvg").value, 10) || TR().avg);
+  S.never = document.getElementById("fNever").checked;
+  S.aJob = document.getElementById("fAJob").value.trim();
+  S.bJob = document.getElementById("fBJob").value.trim();
+  S.aPrice = parseInt(document.getElementById("fAPrice").value, 10) || "";
+  S.bPrice = parseInt(document.getElementById("fBPrice").value, 10) || "";
+  save(); closeSheet(); restart();
+});
+document.addEventListener("keydown", function(e){
+  if(e.target.closest && e.target.closest("input,select,textarea")) return;
+  if(e.key === "s" || e.key === "S"){ e.preventDefault(); openSheet(); }
+  else if(e.key === "Escape") closeSheet();
+});
+/* Press and hold the top of the screen (the app's header) to reopen settings when the tab is hidden */
+var holdT = null;
+document.getElementById("device").addEventListener("pointerdown", function(e){
+  if(!e.target.closest(".top") && !e.target.closest(".fake-status")) return;
+  holdT = setTimeout(openSheet, 700);
+});
+["pointerup","pointerleave","pointercancel"].forEach(function(t){ document.getElementById("device").addEventListener(t, function(){ clearTimeout(holdT); }); });
+
+/* ---------- notification chime: two soft glassy notes, made in the browser ---------- */
+var AC = null;
+function audio(){
+  try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){ AC = null; }
+  return AC;
+}
+function note(ctx, freq, start, len, vol){
+  [[1, vol], [2.01, vol * .18], [3.02, vol * .05]].forEach(function(h){
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = freq * h[0];
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(h[1], start + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + len);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(start); o.stop(start + len + 0.05);
+  });
+}
+function chime(){
+  if(!S.sound) return;
+  var ctx = audio(); if(!ctx) return;
+  var t = ctx.currentTime + 0.02;
+  note(ctx, 1318.5, t, 0.55, 0.22);
+  note(ctx, 1975.5, t + 0.11, 0.8, 0.18);
+}
+/* Browsers only allow sound after a tap, so wake the audio on the first one */
+document.addEventListener("pointerdown", function(){ if(S.sound) audio(); }, true);
+var soundBox = document.getElementById("fSound");
+soundBox.checked = S.sound !== false;
+soundBox.addEventListener("change", function(){ S.sound = soundBox.checked; save(); if(S.sound) chime(); });
+
+applyTheme();
+restart();
+})();
+</script>
+</body></html>

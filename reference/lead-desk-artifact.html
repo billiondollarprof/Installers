@@ -1,0 +1,480 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Quote Recovery Lead Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a working desk. Sticky header with three tabs (Leads, Script, How it works). Leads opens on today's follow ups, then the pipeline; every lead is a card with its actions on it. */
+:root{
+  --bg:#f3f1ed; --panel:#ffffff; --ink:#1b2126; --soft:#5f6a72; --line:#e2ded7; --field:#f6f4f0;
+  --accent:#1d5c55; --accent-ink:#ffffff; --accent-soft:#e3efec;
+  --hot:#b4542d; --hot-soft:#f7e6dd; --warn:#9a6b10; --warn-soft:#f6ecd4; --cold:#8a939a; --cold-soft:#eceeef; --good:#2d7a4a; --good-soft:#e1f1e6;
+  --wa:#1f9d55; --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif; --body:"Manrope","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111517; --panel:#191e21; --ink:#e7ebed; --soft:#9ba6ad; --line:#2a3135; --field:#20262a;
+    --accent:#5fb3a6; --accent-ink:#0e1513; --accent-soft:#1d2e2b;
+    --hot:#e58a62; --hot-soft:#3a251c; --warn:#d9ad52; --warn-soft:#352b17; --cold:#8d979e; --cold-soft:#23292d; --good:#6cc28c; --good-soft:#1b2e22;
+    --wa:#3cc276; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111517; --panel:#191e21; --ink:#e7ebed; --soft:#9ba6ad; --line:#2a3135; --field:#20262a;
+  --accent:#5fb3a6; --accent-ink:#0e1513; --accent-soft:#1d2e2b;
+  --hot:#e58a62; --hot-soft:#3a251c; --warn:#d9ad52; --warn-soft:#352b17; --cold:#8d979e; --cold-soft:#23292d; --good:#6cc28c; --good-soft:#1b2e22;
+  --wa:#3cc276; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.hwrap{max-width:980px;margin:0 auto;padding-block:12px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{margin:0;font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-.01em}
+.brand span{font-size:12.5px;color:var(--soft)}
+.tabs{display:flex;gap:4px;margin-top:8px}
+.tabs button{border:0;background:transparent;padding:10px 12px;font-weight:700;font-size:14px;color:var(--soft);border-bottom:2px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+
+main{max-width:980px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+section[hidden]{display:none}
+
+/* pipeline strip */
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:16px}
+.pipe button{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px;text-align:left;display:grid;gap:2px}
+.pipe button b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
+.pipe button span{font-size:12px;color:var(--soft);font-weight:600}
+.pipe button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pipe .due b{color:var(--hot)}
+@media (max-width: 640px){
+  .pipe{display:flex;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .pipe button{flex:0 0 112px;scroll-snap-align:start}
+}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.toolbar input[type=search]{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 12px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 13px;font-weight:700;font-size:13.5px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--hot)}
+.note{font-size:13px;color:var(--soft)}
+
+/* lead cards */
+.list{display:grid;gap:10px}
+.lead{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px;position:relative;overflow:hidden}
+.lead::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cold)}
+.lead.s-hot::before{background:var(--hot)}
+.lead.s-warm::before{background:var(--warn)}
+.lead.s-good::before{background:var(--good)}
+.row1{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.who{min-width:0}
+.who b{font-size:16px;font-weight:700}
+.who div{font-size:13px;color:var(--soft)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pill{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--cold-soft);color:var(--soft);white-space:nowrap}
+.pill.hot{background:var(--hot-soft);color:var(--hot)}
+.pill.warm{background:var(--warn-soft);color:var(--warn)}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.legal{background:transparent;border:1px solid var(--line)}
+.pill.legal.ok{border-color:var(--good);color:var(--good)}
+.pill.legal.no{border-color:var(--hot);color:var(--hot)}
+.acts{display:flex;flex-wrap:wrap;gap:6px}
+.acts a,.acts button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--field);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;text-decoration:none;color:var(--ink)}
+.acts a.wa{color:var(--wa);border-color:color-mix(in srgb,var(--wa) 40%,var(--line))}
+.acts .num{font-variant-numeric:tabular-nums;user-select:all}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--soft)}
+.meta b{color:var(--ink);font-weight:600}
+.notes{font-size:13.5px;white-space:pre-line;background:var(--field);border-radius:10px;padding:8px 10px}
+details.edit summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);list-style:none}
+details.edit summary::-webkit-details-marker{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px}
+label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--soft);min-width:0}
+input,select,textarea{border:1px solid var(--line);background:var(--field);border-radius:9px;padding:8px 10px;font-size:14px;width:100%;min-width:0;font-weight:500}
+textarea{min-height:70px;resize:vertical}
+.wide{grid-column:1/-1}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.quick button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:700}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.panel h2{margin:0 0 6px;font-family:var(--display);font-size:18px}
+.empty{text-align:center;padding:34px 16px;color:var(--soft)}
+.empty h2{font-family:var(--display);color:var(--ink);margin:0 0 6px;font-size:20px}
+
+/* script */
+.doc{display:grid;gap:14px;max-width:720px}
+.doc h2{font-family:var(--display);font-size:22px;margin:8px 0 0}
+.doc h3{font-size:15px;margin:0 0 6px}
+.say{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:12px 14px;font-size:15.5px;line-height:1.55}
+.say p{margin:0 0 8px}.say p:last-child{margin:0}
+.say .you{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+.tip{font-size:13.5px;color:var(--soft)}
+.ob{display:grid;gap:8px}
+.ob div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.ob b{display:block;margin-bottom:2px}
+.copyline{display:flex;justify-content:flex-end}
+.steps{counter-reset:s;display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.steps li{counter-increment:s;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 52px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:800;display:grid;place-items:center;font-size:13px}
+.steps b{display:block}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:9px 14px;border-radius:999px;font-weight:700;font-size:13.5px;z-index:20}
+</style>
+
+<header><div class="hwrap">
+  <div class="brand"><h1>Lead Desk</h1><span id="sync">Connecting to your leads…</span></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="leads" aria-selected="true">Leads</button>
+    <button role="tab" data-tab="script" aria-selected="false">Script</button>
+    <button role="tab" data-tab="how" aria-selected="false">How it works</button>
+  </div>
+</div></header>
+
+<main>
+<section id="tab-leads">
+  <div class="pipe" id="pipe"></div>
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="Search business, town, name or notes">
+    <button class="btn primary" id="bAdd" type="button">Add lead</button>
+    <button class="btn" id="bImport" type="button">Paste a list</button>
+  </div>
+  <div id="addBox" hidden></div>
+  <div id="importBox" hidden class="panel" style="margin-bottom:14px">
+    <h2>Paste a list of leads</h2>
+    <p class="note">One lead per line, columns separated by commas or tabs, in this order: business, contact name, trade, town, phone, email, website, company type (Ltd or Sole trader), company number, source, notes. Copying straight from a spreadsheet works. A header row is skipped.</p>
+    <label for="importText">Leads<textarea id="importText" rows="6" placeholder="Smith &amp; Sons Glazing, Gary Smith, Windows, Stockport, 0161 555 0101, gary@example.co.uk, smithglazing.co.uk, Ltd, 01234567, Google Maps,"></textarea></label>
+    <div class="toolbar" style="margin:10px 0 0"><button class="btn primary" id="bDoImport" type="button">Add these leads</button><span class="note" id="importMsg"></span></div>
+  </div>
+  <div class="list" id="list"></div>
+</section>
+
+<section id="tab-script" hidden><div class="doc" id="scriptDoc"></div></section>
+
+<section id="tab-how" hidden><div class="doc">
+  <h2>The daily loop</h2>
+  <ol class="steps">
+    <li><b>Find</b>Independent installers with 5 to 30 staff in one region. Google Maps, their own websites, the FENSA installer list and Companies House. Add them here, or send the list to Claude to load in.</li>
+    <li><b>Check before you contact</b>Is it a limited company? Companies House answers in seconds, and you can email a limited company without asking first, as long as every email has an opt out. Sole traders and ordinary partnerships need consent before you email them, so phone them instead. Before calling any number, check it is not on the CTPS list (the business opt out register for sales calls).</li>
+    <li><b>Call 10 a day</b>Use the Script tab. Ask the one question, listen, and offer the two minute video only to owners who see the problem.</li>
+    <li><b>Send the video the same day</b>Personalise the demo with their business name, record it, send it on WhatsApp or email, and set the lead to Video sent. The desk sets the follow up for two days later.</li>
+    <li><b>Follow up on the day you promised</b>Open Due today each morning. Call, ask what they thought, and offer the pilot.</li>
+    <li><b>Close with a deposit</b>£1,500 to set up, £500 to start and the rest when it goes live. Monthly care at £199 is offered after it is live, never before.</li>
+  </ol>
+  <h2>What counts</h2>
+  <p class="tip">After two weeks, look at the numbers at the top of Leads: how many calls it takes to get one interested owner, and how many interested owners it takes to get one deposit. Change the opening line or the region if the first number is poor; change the offer if the second is.</p>
+</div></section>
+</main>
+
+<script>
+(function(){
+"use strict";
+var STATUSES = [
+  {k:"new", label:"New", tone:""},
+  {k:"called", label:"Called, no answer", tone:""},
+  {k:"interested", label:"Interested", tone:"hot"},
+  {k:"video", label:"Video sent", tone:"warm"},
+  {k:"followup", label:"Follow up", tone:"warm"},
+  {k:"pilot", label:"Pilot agreed", tone:"good"},
+  {k:"won", label:"Paid", tone:"good"},
+  {k:"no", label:"Not interested", tone:""},
+  {k:"dnc", label:"Do not contact", tone:""}
+];
+var CLOSED = {won:1, no:1, dnc:1};
+var SMAP = {}; STATUSES.forEach(function(s){ SMAP[s.k] = s; });
+var db = null, leads = [], filter = "due", query = "", openId = null, pendingDelete = null;
+var $ = function(id){ return document.getElementById(id); };
+function el(tag, cls, text){ var e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function today(){ var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function addDays(n){ var d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function niceDate(s){ if(!s) return ""; var d = new Date(s + "T12:00:00"); if(isNaN(d)) return s; var t = today(); if(s === t) return "Today"; if(s === addDays(1)) return "Tomorrow"; if(s < t) return "Overdue · " + d.toLocaleDateString("en-GB",{day:"numeric",month:"short"}); return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
+function toast(msg){ var t = el("div","toast", msg); document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 1800); }
+function copy(text){ try{ navigator.clipboard.writeText(text).then(function(){ toast("Copied " + text); }, function(){ toast("Select the number to copy it"); }); }catch(e){ toast("Select the number to copy it"); } }
+
+/* UK numbers: digits for links, and whether it is a mobile (only mobiles get WhatsApp) */
+function digits(p){ var d = String(p||"").replace(/[^\d+]/g,""); if(d.indexOf("+44") === 0) d = "0" + d.slice(3); else if(d.indexOf("44") === 0 && d.length >= 12) d = "0" + d.slice(2); return d.replace(/\D/g,""); }
+function isMobile(p){ return /^07\d{9}$/.test(digits(p)); }
+function intl(p){ var d = digits(p); return d.charAt(0) === "0" ? "44" + d.slice(1) : d; }
+function isDue(l){ return !CLOSED[l.status] && l.nextDate && l.nextDate <= today(); }
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tabs button").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".tabs button").forEach(function(x){ x.setAttribute("aria-selected", String(x === b)); });
+    ["leads","script","how"].forEach(function(t){ $("tab-" + t).hidden = t !== b.dataset.tab; });
+    try{ localStorage.setItem("leaddesk-tab", b.dataset.tab); }catch(e){}
+  });
+});
+try{ var saved = localStorage.getItem("leaddesk-tab"); if(saved){ var tb = document.querySelector('.tabs button[data-tab="' + saved + '"]'); if(tb) tb.click(); } }catch(e){}
+
+/* ---------- pipeline strip ---------- */
+function renderPipe(){
+  var pipe = $("pipe"); pipe.replaceChildren();
+  var defs = [["due","Due today", leads.filter(isDue).length, "due"],["all","All leads", leads.length,""]];
+  ["new","called","interested","video","followup","pilot","won"].forEach(function(k){ defs.push([k, SMAP[k].label, leads.filter(function(l){ return l.status === k; }).length, ""]); });
+  defs.forEach(function(d){
+    var b = el("button", d[3]); b.type = "button"; b.setAttribute("aria-pressed", String(filter === d[0]));
+    b.appendChild(el("b", null, String(d[2]))); b.appendChild(el("span", null, d[1]));
+    b.addEventListener("click", function(){ filter = d[0]; renderAll(); });
+    pipe.appendChild(b);
+  });
+}
+
+/* ---------- list ---------- */
+function visible(){
+  var q = query.trim().toLowerCase();
+  return leads.filter(function(l){
+    if(filter === "due" && !isDue(l)) return false;
+    if(filter !== "due" && filter !== "all" && l.status !== filter) return false;
+    if(!q) return true;
+    return [l.biz,l.contact,l.town,l.trade,l.notes,l.phone,l.email].join(" ").toLowerCase().indexOf(q) >= 0;
+  }).sort(function(a,b){
+    var ad = a.nextDate || "9999", bd = b.nextDate || "9999";
+    if(ad !== bd) return ad < bd ? -1 : 1;
+    return String(a.biz||"").localeCompare(String(b.biz||""));
+  });
+}
+function renderList(){
+  var list = $("list"); list.replaceChildren();
+  if(!db){ list.appendChild(emptyBox("Your leads live in this page's database", "It connects when you open the page signed in to Claude. If this message stays, reload the page.")); return; }
+  var v = visible();
+  if(!leads.length){ list.appendChild(emptyBox("No leads yet", "Press Add lead, paste a list from a spreadsheet, or ask Claude to find and load leads for a region.")); return; }
+  if(!v.length){ list.appendChild(emptyBox(filter === "due" ? "Nothing due today" : "No leads here", filter === "due" ? "Every follow up is on track. Open All leads, or start calling the New ones." : "Try another group or clear the search.")); return; }
+  v.forEach(function(l){ list.appendChild(card(l)); });
+}
+function emptyBox(t, s){ var d = el("div","panel empty"); d.appendChild(el("h2", null, t)); d.appendChild(el("p", null, s)); return d; }
+
+function card(l){
+  var st = SMAP[l.status] || SMAP.new;
+  var c = el("article","lead" + (st.tone ? " s-" + st.tone : ""));
+  var r1 = el("div","row1"), who = el("div","who");
+  who.appendChild(el("b", null, l.biz || "Unnamed business"));
+  who.appendChild(el("div", null, [l.contact, l.trade, l.town].filter(Boolean).join(" · ")));
+  r1.appendChild(who);
+  var pills = el("div","pills");
+  pills.appendChild(el("span","pill " + st.tone, st.label));
+  var ct = (l.companyType || "").toLowerCase();
+  if(ct){ pills.appendChild(el("span","pill legal " + (ct === "ltd" ? "ok" : "no"), ct === "ltd" ? "Ltd: email allowed" : "Sole trader: phone first")); }
+  if(l.ctps === "clear") pills.appendChild(el("span","pill legal ok","CTPS checked"));
+  else if(l.ctps === "registered") pills.appendChild(el("span","pill legal no","On CTPS: do not cold call"));
+  else pills.appendChild(el("span","pill legal","CTPS not checked"));
+  r1.appendChild(pills);
+  c.appendChild(r1);
+
+  var acts = el("div","acts");
+  if(l.phone){
+    var call = el("a", null, "Call"); call.href = "tel:" + digits(l.phone); acts.appendChild(call);
+    var num = el("button","num", l.phone); num.type = "button"; num.title = "Copy number"; num.addEventListener("click", function(){ copy(l.phone); }); acts.appendChild(num);
+    if(isMobile(l.phone)){
+      var wa = el("a","wa","WhatsApp"); wa.href = "https://wa.me/" + intl(l.phone); wa.target = "_blank"; wa.rel = "noopener"; acts.appendChild(wa);
+    }
+  }
+  if(l.email){
+    var gm = el("a", null, "Email"); gm.target = "_blank"; gm.rel = "noopener";
+    gm.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(l.email) + "&su=" + encodeURIComponent("A quick video for " + (l.biz || "you"));
+    acts.appendChild(gm);
+    var em = el("button","num", l.email); em.type = "button"; em.addEventListener("click", function(){ copy(l.email); }); acts.appendChild(em);
+  }
+  if(l.website){ var w = el("a", null, "Website"); w.href = /^https?:/.test(l.website) ? l.website : "https://" + l.website; w.target = "_blank"; w.rel = "noopener"; acts.appendChild(w); }
+  c.appendChild(acts);
+
+  var meta = el("div","meta");
+  if(l.nextDate && !CLOSED[l.status]){ var m = el("span"); m.appendChild(document.createTextNode("Next: ")); m.appendChild(el("b", null, niceDate(l.nextDate))); meta.appendChild(m); }
+  if(l.lastContact){ meta.appendChild(el("span", null, "Last contact: " + niceDate(l.lastContact).replace("Overdue · ",""))); }
+  if(l.companyNo){ var ch = el("a", null, "Companies House " + l.companyNo); ch.href = "https://find-and-update.company-information.service.gov.uk/company/" + encodeURIComponent(l.companyNo); ch.target = "_blank"; ch.rel = "noopener"; meta.appendChild(ch); }
+  if(l.source) meta.appendChild(el("span", null, "Found on " + l.source));
+  if(meta.childNodes.length) c.appendChild(meta);
+  if(l.notes) c.appendChild(el("div","notes", l.notes));
+
+  /* quick outcomes after a call */
+  var quick = el("div","quick");
+  [["No answer","called",1],["Interested","interested",0],["Video sent","video",2],["Follow up","followup",2],["Pilot agreed","pilot",3],["Not interested","no",null]].forEach(function(q){
+    var b = el("button", null, q[0]); b.type = "button";
+    b.addEventListener("click", function(){
+      var patch = {status:q[1], lastContact:today()};
+      patch.nextDate = q[2] === null ? "" : addDays(q[2]);
+      save(l.id, patch, q[0] + (q[2] ? " · next " + niceDate(patch.nextDate).toLowerCase() : ""));
+    });
+    quick.appendChild(b);
+  });
+  c.appendChild(quick);
+
+  var det = el("details","edit"); if(openId === l.id) det.open = true;
+  det.addEventListener("toggle", function(){ openId = det.open ? l.id : (openId === l.id ? null : openId); });
+  det.appendChild(el("summary", null, "Edit details"));
+  det.appendChild(form(l));
+  c.appendChild(det);
+  return c;
+}
+
+var FIELDS = [
+  ["biz","Business"],["contact","Contact name"],["trade","Trade"],["town","Town"],
+  ["phone","Phone"],["email","Email"],["website","Website"],["companyType","Company type","select",["","Ltd","Sole trader","Partnership"]],
+  ["companyNo","Company number"],["ctps","CTPS check","select",["","clear","registered"]],["status","Status","status"],["nextDate","Next follow up","date"],
+  ["source","Where you found them"],["notes","Notes","textarea"]
+];
+function form(l, isNew){
+  var f = el("form"); var g = el("div","grid");
+  FIELDS.forEach(function(fd){
+    var lab = el("label", fd[2] === "textarea" ? "wide" : null, fd[1]); var input;
+    if(fd[2] === "select"){ input = el("select"); fd[3].forEach(function(o){ var op = el("option", null, o === "" ? "Not set" : o === "clear" ? "Checked, not registered" : o === "registered" ? "Registered, do not call" : o); op.value = o; input.appendChild(op); }); }
+    else if(fd[2] === "status"){ input = el("select"); STATUSES.forEach(function(s){ var op = el("option", null, s.label); op.value = s.k; input.appendChild(op); }); }
+    else if(fd[2] === "textarea"){ input = el("textarea"); }
+    else { input = el("input"); input.type = fd[2] === "date" ? "date" : fd[0] === "email" ? "email" : fd[0] === "phone" ? "tel" : "text"; }
+    input.name = fd[0]; input.id = (isNew ? "new-" : "e-" + l.id + "-") + fd[0];
+    input.value = (l && l[fd[0]] != null) ? l[fd[0]] : (fd[0] === "status" ? "new" : "");
+    lab.htmlFor = input.id; lab.appendChild(input); g.appendChild(lab);
+  });
+  f.appendChild(g);
+  var bar = el("div","toolbar"); bar.style.margin = "12px 0 0";
+  var sv = el("button","btn primary", isNew ? "Add lead" : "Save changes"); sv.type = "submit"; bar.appendChild(sv);
+  if(!isNew){
+    var del = el("button","btn danger","Delete"); del.type = "button";
+    var conf = el("span","confirm"); conf.hidden = true;
+    conf.appendChild(el("span", null, "Delete this lead for good?"));
+    var yes = el("button","btn danger","Yes, delete"); yes.type = "button";
+    var no = el("button","btn","Keep it"); no.type = "button";
+    conf.appendChild(yes); conf.appendChild(no);
+    del.addEventListener("click", function(){ conf.hidden = false; del.hidden = true; });
+    no.addEventListener("click", function(){ conf.hidden = true; del.hidden = false; });
+    yes.addEventListener("click", function(){ remove(l.id); });
+    bar.appendChild(del); bar.appendChild(conf);
+  } else {
+    var cancel = el("button","btn","Cancel"); cancel.type = "button"; cancel.addEventListener("click", function(){ $("addBox").hidden = true; }); bar.appendChild(cancel);
+  }
+  f.appendChild(bar);
+  f.addEventListener("submit", function(e){
+    e.preventDefault();
+    var data = {}; FIELDS.forEach(function(fd){ data[fd[0]] = f.elements[fd[0]].value.trim(); });
+    if(!data.biz){ toast("Add the business name first"); return; }
+    if(isNew){ create(data).then(function(){ $("addBox").hidden = true; }); }
+    else save(l.id, data, "Saved");
+  });
+  return f;
+}
+
+/* ---------- store ---------- */
+function save(id, patch, msg){
+  if(!db) return;
+  patch.updated = new Date().toISOString();
+  db.collection("leads").doc(id).update(patch).then(function(){ if(msg) toast(msg); }, function(err){ toast(err && err.code === "invalid_argument" ? "You can view these leads but not change them" : "Couldn't save. Try again."); });
+}
+function create(data){
+  if(!db) return Promise.resolve();
+  data.status = data.status || "new"; data.created = new Date().toISOString(); data.updated = data.created;
+  return db.collection("leads").add(data).then(function(){ toast("Lead added"); }, function(err){ toast(err && err.code === "quota_exceeded" ? "The lead store is full. Delete old leads first." : "Couldn't add the lead. Try again."); });
+}
+function remove(id){ if(!db) return; db.collection("leads").doc(id).delete().then(function(){ toast("Deleted"); }, function(){ toast("Couldn't delete. Try again."); }); }
+
+$("q").addEventListener("input", function(){ query = this.value; renderList(); });
+$("bAdd").addEventListener("click", function(){ var box = $("addBox"); box.hidden = !box.hidden; if(!box.hidden){ box.replaceChildren(); var p = el("div","panel"); p.style.marginBottom = "14px"; p.appendChild(el("h2", null, "Add a lead")); p.appendChild(form({status:"new"}, true)); box.appendChild(p); } });
+$("bImport").addEventListener("click", function(){ $("importBox").hidden = !$("importBox").hidden; });
+$("bDoImport").addEventListener("click", function(){
+  var rows = $("importText").value.split(/\r?\n/).map(function(r){ return r.trim(); }).filter(Boolean);
+  var keys = ["biz","contact","trade","town","phone","email","website","companyType","companyNo","source","notes"];
+  var items = [];
+  rows.forEach(function(r){
+    var cols = r.indexOf("\t") >= 0 ? r.split("\t") : r.split(",");
+    if(/^business$/i.test((cols[0]||"").trim())) return;
+    var o = {}; keys.forEach(function(k, i){ o[k] = (cols[i] || "").trim(); });
+    if(keys.length < cols.length) o.notes = cols.slice(keys.length - 1).join(", ").trim();
+    if(o.biz) items.push(o);
+  });
+  if(!items.length){ $("importMsg").textContent = "No leads found. Put the business name first on each line."; return; }
+  $("importMsg").textContent = "Adding " + items.length + "…";
+  var chain = Promise.resolve();
+  items.forEach(function(o){ chain = chain.then(function(){ return create(o); }); });
+  chain.then(function(){ $("importMsg").textContent = items.length + " leads added."; $("importText").value = ""; filter = "new"; renderAll(); });
+});
+
+function renderAll(){ renderPipe(); renderList(); }
+
+/* ---------- script ---------- */
+var SCRIPT = [
+  ["h","Before you dial"],
+  ["tip","Have their website open. Know their name if Companies House lists a director. Smile when you speak; it carries. Aim for 2 to 3 minutes."],
+  ["h","1. The opener"],
+  ["say","Hi, is that {name}?|My name is {me}. I'll be quick. I help window and door companies win back quotes that went quiet. Can I ask you one question?"],
+  ["tip","If someone else answers: “Who looks after quotes and sales there? When is the best time to catch them?” Write it in the notes and set a follow up."],
+  ["h","2. The question"],
+  ["say","When you send a quote and the customer stops replying, what usually happens to it?"],
+  ["tip","Now stop talking. Let them answer, however long it takes. Their answer tells you whether they have the problem."],
+  ["h","3. Dig a little"],
+  ["say","Roughly how many quotes do you send in a month?|And how many of those would you say you chase more than once?|What about the ones from six months ago, does anyone go back to those?"],
+  ["h","4. The bridge"],
+  ["say","That's what most owners tell me. Those quotes aren't lost, they just went quiet.|I've built a system that messages them politely in your name, asks if they're still interested, and books the ones who are into a call with you. Then it does the same for every new quote, so none go quiet again."],
+  ["h","5. The ask"],
+  ["say","Can I send you a two minute video showing it working with {biz} on the screen? Is WhatsApp or email better for you?"],
+  ["say","Great. I'll send it today. Can I give you a ring on {day} to hear what you think? Morning or afternoon?"],
+  ["tip","Press Video sent on their card after you send it. The desk sets the follow up for two days later."],
+  ["h","If they say"],
+  ["ob","“We already follow up.”|Good, that puts you ahead of most. How about the quotes from six months or a year ago? That's usually where the money is sitting."],
+  ["ob","“Not interested.”|No problem at all, thanks for your time. (Mark them Not interested and move on. Never push.)"],
+  ["ob","“How much is it?”|It's a one off setup of £1,500: £500 to start, and the rest when it's live and working. The video shows exactly what you'd get."],
+  ["ob","“Is this spam? Customers will hate it.”|It only messages people who asked you for a quote, in your name, with an opt out on every message. If they don't reply after two messages, it stops. Nobody gets pestered."],
+  ["ob","“Is it AI?”|The first messages are set by you, word for word. If a customer types a question, an assistant answers using your own information, and anything it can't answer goes straight to you."],
+  ["ob","“Just email me something.”|Of course. What's the best address? I'll send the two minute video, and I'll call {day} to see if it's useful."],
+  ["ob","“Where are you based?”|Tell the truth: I work remotely with UK businesses. Then carry on. Honesty here builds more trust than any line."],
+  ["h","The follow up call, two days later"],
+  ["say","Hi {name}, it's {me}. I sent you the video on {sentday}. Did you get a chance to watch it?"],
+  ["say","What did you think?|The simplest way to try it is on your old quotes. You send me the quotes from the last six to twelve months, I set it up in your name, and you see the replies come in. It's £500 to start and the rest when it's live. Shall we get you set up?"],
+  ["tip","If they haven't watched it: “No problem, it's two minutes. When can I call you back?” Set the date on their card."],
+  ["h","Voicemail"],
+  ["say","Hi {name}, it's {me}. I help window and door companies win back quotes that went quiet. I'll try you again on {day}. Thanks."],
+  ["h","Message with the video (WhatsApp)"],
+  ["copy","Hi {name}, thanks for your time on the phone just now. Here's the two minute video I mentioned, made for {biz}: [video link]\n\nI'll give you a ring on {day} to hear what you think.\n\n{me}"],
+  ["h","Email with the video"],
+  ["copy","Subject: A two minute video for {biz}\n\nHi {name},\n\nThanks for speaking with me today. Here's the short video I mentioned, showing how your quotes that went quiet can be followed up in your name, with the warm ones booked into calls with you:\n\n[video link]\n\nI'll call you on {day} to hear what you think.\n\nBest regards,\n{me}\n\nIf you'd rather not hear from me again, just reply and let me know."],
+  ["h","If they haven't replied (two days later)"],
+  ["copy","Hi {name}, just checking the video came through. Happy to call whenever suits you. {me}"],
+  ["h","The two minute video"],
+  ["tip","1. Their name and the problem (15 seconds): “Hi {name}, this is for {biz}. Every quote that goes quiet is a customer who already asked you for a price.” 2. The demo (60 seconds): open the Quote Recovery demo with their name in it, tap through Sarah booking and the alert on your phone. 3. The money (20 seconds): open What it's worth. 4. The ask (15 seconds): “I'll call you {day} to hear what you think.”"]
+];
+function renderScript(){
+  var d = $("scriptDoc"); d.replaceChildren();
+  var bar = el("div","panel"); bar.appendChild(el("h2", null, "Fill in the blanks"));
+  var g = el("div","grid");
+  [["me","Your name"],["name","Their first name"],["biz","Their business"],["day","Follow up day, e.g. Thursday"],["sentday","Day you sent the video"]].forEach(function(f){
+    var lab = el("label", null, f[1]); var inp = el("input"); inp.id = "sv-" + f[0]; inp.value = sv[f[0]] || "";
+    inp.addEventListener("input", function(){ sv[f[0]] = inp.value; try{ localStorage.setItem("leaddesk-script", JSON.stringify(sv)); }catch(e){} fillScript(); });
+    lab.htmlFor = inp.id; lab.appendChild(inp); g.appendChild(lab);
+  });
+  bar.appendChild(g); d.appendChild(bar);
+  var body = el("div"); body.id = "scriptBody"; body.className = "doc"; d.appendChild(body);
+  fillScript();
+}
+var sv = {}; try{ sv = JSON.parse(localStorage.getItem("leaddesk-script") || "{}") || {}; }catch(e){ sv = {}; }
+function fill(t){ return t.replace(/\{(\w+)\}/g, function(_, k){ var v = (sv[k] || "").trim(); var fb = {me:"[your name]", name:"[their name]", biz:"[their business]", day:"[day]", sentday:"[day]"}; return v || fb[k] || ""; }); }
+function fillScript(){
+  var b = $("scriptBody"); if(!b) return; b.replaceChildren();
+  SCRIPT.forEach(function(s){
+    var kind = s[0], text = fill(s[1]);
+    if(kind === "h") b.appendChild(el("h2", null, text));
+    else if(kind === "tip") b.appendChild(el("p","tip", text));
+    else if(kind === "say"){ var box = el("div","say"); box.appendChild(el("span","you","You say")); text.split("|").forEach(function(p){ box.appendChild(el("p", null, p)); }); b.appendChild(box); }
+    else if(kind === "ob"){ var parts = text.split("|"); var o = el("div","ob"); var x = el("div"); x.appendChild(el("b", null, parts[0])); x.appendChild(document.createTextNode(parts[1])); o.appendChild(x); b.appendChild(o); }
+    else if(kind === "copy"){ var box2 = el("div","say"); box2.appendChild(el("span","you","Copy and send")); var pre = el("p", null, text); pre.style.whiteSpace = "pre-line"; box2.appendChild(pre);
+      var cl = el("div","copyline"); var cb = el("button","btn","Copy"); cb.type = "button"; cb.addEventListener("click", function(){ try{ navigator.clipboard.writeText(text).then(function(){ toast("Copied"); }, function(){ toast("Select the text to copy it"); }); }catch(e){ toast("Select the text to copy it"); } }); cl.appendChild(cb); box2.appendChild(cl); b.appendChild(box2); }
+  });
+}
+renderScript();
+
+/* ---------- connect ---------- */
+renderAll();
+(window.claude ? window.claude.use("db") : Promise.resolve(null)).then(function(d){
+  db = d;
+  if(!db){ $("sync").textContent = "Not connected. Open the page signed in to Claude."; renderAll(); return; }
+  $("sync").textContent = "Saved to your Claude account";
+  db.collection("leads").onSnapshot(function(snap){
+    leads = snap.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
+    if(filter === "due" && !leads.some(isDue) && leads.length) filter = "all";
+    renderAll();
+  }, function(err){ $("sync").textContent = "Lost connection to your leads. Reload the page."; });
+}, function(){ $("sync").textContent = "Not connected. Reload the page."; });
+})();
+</script>
+</body></html>

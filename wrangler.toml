@@ -1,0 +1,22 @@
+name = "quote-recovery"
+main = "src/index.ts"
+compatibility_date = "2026-09-24"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# database_id stays as REPLACE_ME in the repo. The deploy workflow looks the
+# database up by name (creating it the first time) and fills the id in.
+[[d1_databases]]
+binding = "DB"
+database_name = "quote-recovery"
+database_id = "REPLACE_ME"
+
+# Weekly lead finder run. Cron is UTC: 06:00 UTC is 07:00 UK summer time, 06:00 winter.
+[triggers]
+crons = ["0 6 * * 1"]
+
+# Secrets (never in this file): COMPANIES_HOUSE_KEY, DESK_TOKEN.
+# The deploy workflow copies them from GitHub Actions secrets.
