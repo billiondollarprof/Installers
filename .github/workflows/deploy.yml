@@ -76,5 +76,6 @@ jobs:
             echo "$1 returned $code, expected $2"; return 1
           }
           check /demo/ 200
+          curl -s "$base/demo/" | cmp - public/demo/index.html && echo "/demo/ matches public/demo/index.html"
           check /api/health 200
           curl -s "$base/api/health"

@@ -82,4 +82,9 @@ purpose. Do not import Amara code, and do not touch the Amara repo from here.
 - Demo: https://claude.ai/artifact/5GBWF6v5GTZN2yZFPopNk1
 - Lead Desk: https://claude.ai/artifact/SqaNjLJCdvTSDSHUGX7BGD (holds the first 29 hand found Kent leads; export them into D1 when the desk is ported)
 
-Once the Cloudflare versions are live, record their URLs here.
+## Live on Cloudflare
+
+- Worker: https://quote-recovery.billiondollarprof.workers.dev
+- Demo: https://quote-recovery.billiondollarprof.workers.dev/demo/
+- Lead Desk: not ported yet (`/` redirects to the demo until it is)
+- Deploys from branch `ccr-9b35ccd8-fso3n4` via `.github/workflows/deploy.yml`
