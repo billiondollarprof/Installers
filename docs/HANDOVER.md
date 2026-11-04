@@ -1,55 +1,40 @@
-# Handover: where the last session stopped (29 October 2026)
+# Handover: where the last session stopped (4 November 2026)
 
-## Done
-- Research and decisions: `docs/DECISIONS.md`, `docs/RESEARCH.md`.
-- The sales demo: `public/demo/index.html` (also live as a Claude artifact,
-  https://claude.ai/artifact/5GBWF6v5GTZN2yZFPopNk1).
-- The Lead Desk, live as a Claude artifact with its own database:
-  https://claude.ai/artifact/SqaNjLJCdvTSDSHUGX7BGD
-  Source in `reference/lead-desk-artifact.html`. It holds **29 hand found Kent
-  leads** (collection `leads`, ids starting `kent-`). Ten have a phone number;
-  the rest need contact details. Read them with the ArtifactData tool and move
-  them into D1 when the desk is ported.
-- Lead rules, build plan, schema and Worker config drafts.
+## Live on Cloudflare (branch `ccr-9b35ccd8-fso3n4`, deployed by `.github/workflows/deploy.yml`)
+- Lead Desk at `/`, demo at `/demo/`, leads API at `/api/leads` (needs the
+  `DESK_TOKEN` GitHub secret as a Bearer token). URLs are in `CLAUDE.md`.
+- D1 database `quote-recovery` created and the schema applied by the workflow.
+  The workflow fills `database_id` in at deploy time; the repo keeps `REPLACE_ME`.
+- `COMPANIES_HOUSE_KEY` is in the Worker. The weekly cron runs a no-op until
+  the finder exists.
+- The cloud session's network blocks `*.workers.dev`, so live checks run in the
+  workflow's smoke test (live files match the repo byte for byte, API refuses
+  a missing password, prints the lead count).
+- Pinned to wrangler 4.140.0; its runtime only supports compatibility dates up
+  to 2026-09-30, so `compatibility_date` is 2026-09-24.
 
-## Set by the owner in this repo's GitHub secrets
-- `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
-- `COMPANIES_HOUSE_KEY` (free)
-- Not set: `GOOGLE_PLACES_KEY`. See "Changed" below.
+## The 29 Kent leads
+Read from the old artifact desk (collection `leads`, all status `new`, no
+dates or CTPS results). The repo is **public**, so they are not committed: the
+owner pastes them into the desk's "Paste a list" box. Check the lead count in
+the latest deploy summary. Duplicates are caught by company number only, so
+pasting twice re-adds the 11 leads without one.
 
-## Changed since BUILD_PLAN.md was written
-**There is no budget for Google Places.** The owner cannot add a card for
-Google Cloud billing right now. Before building step 5 (the find step),
-research free, lawful sources and present the options with evidence:
+## Decided or found this session (see DECISIONS.md)
+- Ofcom's rule on UK mobiles calling from abroad is final; Wi-Fi Calling is the
+  route to test.
+- WhatsApp needs opt in; use it after the first call, not cold.
+- Gemini's free tier is not allowed for apps used in the UK.
+- Stay with quote recovery. The YouTube "AI receptionist" idea is our monthly
+  retainer (instant reply to new quotes); borrow its live AI demo and
+  per prospect research.
 
-1. **Companies House advanced search** (free, official): active companies by
-   SIC code (43342 glazing, 43320 joinery installation, 43390, 43910 roofing)
-   and location. Gives name, company number, registered address, age,
-   directors. No phone or email, so it needs a second step.
-2. **OpenStreetMap** via the Overpass API (free, open data under ODbL):
-   businesses tagged with crafts and shops such as window construction or
-   glaziery, often with phone and website. Coverage in the UK is patchy;
-   measure it for Kent before relying on it.
-3. **The business's own website** (find it by company name, then read the
-   contact page for phone and email, respecting robots.txt).
-4. **Free tiers:** Google Maps Platform has offered a free monthly allowance
-   per call type, but still needs a card on file. Check the current terms;
-   only an option if the owner later adds a card.
-5. **Open source scrapers on GitHub:** many scrape Google Maps pages directly.
-   That breaks Google's terms (see DECISIONS.md, Legal), so do not use or copy
-   them. Open source code is fine to learn from or reuse only if its licence
-   allows it and the data source it reads permits automated access. Say which
-   is which.
-
-Recommend one route, prove it on Kent (how many qualified leads with a phone
-and an email it finds), and wait for "go ahead".
-
-## Next steps, in order
-1. Read `CLAUDE.md`, `docs/DECISIONS.md`, `docs/LEAD_RULES.md`,
-   `docs/BUILD_PLAN.md`, and this file.
-2. Echo back the plan in a few lines and wait for "go ahead".
-3. Build BUILD_PLAN steps 0 to 4: repo skeleton, deploy workflow, D1, demo
-   served from Cloudflare, leads API, Lead Desk ported to D1, the 29 Kent leads
-   moved across.
-4. Research the free lead source (above), then build the finder on it.
-5. Record the live URLs in `CLAUDE.md`.
+## Next steps, in order (each needs the owner's "go ahead")
+1. Live AI replies to typed messages in the demo, through the Worker, on
+   Cloudflare Workers AI's free daily allowance, scripted answers as fallback.
+   The token may need the Workers AI permission.
+2. Research the free lead source (Companies House advanced search, then
+   OpenStreetMap and the firm's own contact page), prove it on Kent, then
+   build the finder (BUILD_PLAN steps 5 to 10).
+3. Prospect research from the lead's website: fill the demo and a call brief
+   (how they take enquiries, likely pain points, opening line).

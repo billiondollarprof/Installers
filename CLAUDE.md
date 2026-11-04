@@ -52,7 +52,9 @@ purpose. Do not import Amara code, and do not touch the Amara repo from here.
 8. **Click every button you add** in a real browser and confirm where it lands.
 9. **Never claim a UI problem from reading source.** Render it and measure it.
 10. **Secrets never go in the repo or the chat.** Keys live in Cloudflare
-    secrets and GitHub Actions secrets only.
+    secrets and GitHub Actions secrets only. This repo is **public**: lead
+    data (names, numbers, emails) never goes into git or workflow inputs or
+    logs either. Leads move through the desk or the API only.
 11. **Anything the owner must run or deploy is pasted whole** in one copyable
     block, with the order stated.
 12. **Never push to `main` without the owner saying so in that message.** Each
@@ -68,7 +70,10 @@ purpose. Do not import Amara code, and do not touch the Amara repo from here.
 | Path | What |
 |---|---|
 | `public/demo/index.html` | The sales demo. Standalone, no build step. |
-| `reference/lead-desk-artifact.html` | Lead Desk as built for the Claude artifact runtime (uses `window.claude` db). Port, do not serve as is. |
+| `public/index.html` | The Lead Desk, served at `/`. Reads and writes D1 through `/api/leads`. |
+| `src/index.ts` | The Worker: leads API (protected by `DESK_TOKEN`), health check, weekly cron. |
+| `.github/workflows/deploy.yml` | Creates D1, applies the schema, copies secrets, deploys, smoke tests. |
+| `reference/lead-desk-artifact.html` | Lead Desk as first built for the Claude artifact runtime. Kept for reference only. |
 | `db/schema.sql` | Draft D1 schema for leads and finder runs. |
 | `wrangler.toml` | Draft Worker config: D1 binding, cron, static assets. |
 | `docs/DECISIONS.md` | Everything decided so far, with the evidence. |
@@ -80,11 +85,11 @@ purpose. Do not import Amara code, and do not touch the Amara repo from here.
 ## Live links (Claude artifacts, private to the owner)
 
 - Demo: https://claude.ai/artifact/5GBWF6v5GTZN2yZFPopNk1
-- Lead Desk: https://claude.ai/artifact/SqaNjLJCdvTSDSHUGX7BGD (holds the first 29 hand found Kent leads; export them into D1 when the desk is ported)
+- Lead Desk (old): https://claude.ai/artifact/SqaNjLJCdvTSDSHUGX7BGD (holds the first 29 hand found Kent leads; being moved to D1)
 
 ## Live on Cloudflare
 
 - Worker: https://quote-recovery.billiondollarprof.workers.dev
 - Demo: https://quote-recovery.billiondollarprof.workers.dev/demo/
-- Lead Desk: not ported yet (`/` redirects to the demo until it is)
+- Lead Desk: https://quote-recovery.billiondollarprof.workers.dev/ (password: the `DESK_TOKEN` GitHub secret)
 - Deploys from branch `ccr-9b35ccd8-fso3n4` via `.github/workflows/deploy.yml`

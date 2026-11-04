@@ -61,9 +61,13 @@ Settled with the owner in October 2026. Do not re-open without being asked.
 - **Never deceive.** No "I spoke to you last month". If asked where you are
   based: "I work remotely with UK businesses."
 - **Calling from Nigeria:** UK networks block calls from abroad that show a UK
-  landline number (Ofcom rule, in force since early 2025). Ofcom proposed in
-  2025 to withhold a UK mobile number on calls from abroad unless it can be
-  verified; whether that is final is unconfirmed. Before buying a virtual
+  landline number (Ofcom rule, in force since early 2025). Ofcom has since
+  finalised (2026) the rule for UK mobile numbers too: networks withhold the
+  caller ID of a call that appears to come from a UK mobile roaming abroad
+  unless they can verify it. So a UK SIM or eSIM roaming in Nigeria may reach
+  prospects as "No caller ID". Wi-Fi Calling on a UK SIM is the route to test
+  (one call to a UK friend: check what number shows); network answers on how
+  it is charged and treated conflict. Before buying a virtual
   number, get the provider to confirm in writing that outbound calls made from
   Nigeria display the UK number and connect. Rough cost: UK mobiles about
   $0.018 to $0.022 a minute, landlines about $0.009 (Zadarma's published rates),
@@ -71,6 +75,12 @@ Settled with the owner in October 2026. Do not re-open without being asked.
 - **WhatsApp on the virtual number:** register WhatsApp Business using the
   "Call me" verification. Ask the provider first whether the number can
   receive verification calls.
+- **WhatsApp is not a cold channel.** WhatsApp's Business Messaging Policy
+  needs the person's number and their opt in before a business messages or
+  calls them, and business initiated calls through the API need a separate
+  call permission. Cold WhatsApp calls risk the number being banned. Use it
+  after the first phone call, once the owner has said WhatsApp is fine (the
+  script already asks "Is WhatsApp or email better for you?").
 
 ## Legal (UK)
 
@@ -90,6 +100,11 @@ Settled with the owner in October 2026. Do not re-open without being asked.
   breaks Google's terms. Places responses have storage limits in Google's
   terms; store our own derived fields and the place id, and re read details
   when needed.
+- **Gemini API free tier:** Google's Gemini API terms allow only the paid
+  tier (a Cloud project with billing) when the app is used by people in the
+  UK, EEA or Switzerland, and the free tier's inputs may be used by Google to
+  improve its products. So the free tier is not an option for a demo shown to
+  UK prospects. Check the live terms before relying on this.
 - **Companies House:** use the official API (free key). It is public data
   under the Open Government Licence.
 - **Websites:** read a business's own public contact page for its email,

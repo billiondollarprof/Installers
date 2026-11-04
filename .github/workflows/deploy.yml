@@ -62,6 +62,8 @@ jobs:
           done
 
       - name: Smoke test the live Worker
+        env:
+          DESK_TOKEN: ${{ secrets.DESK_TOKEN }}
         run: |
           base=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
           [ -n "$base" ] || { echo "No workers.dev URL in the deploy output"; exit 1; }
@@ -76,6 +78,22 @@ jobs:
             echo "$1 returned $code, expected $2"; return 1
           }
           check /demo/ 200
-          curl -s "$base/demo/" | cmp - public/demo/index.html && echo "/demo/ matches public/demo/index.html"
+          curl -s "$base/demo/" > live-demo.html
+          cmp live-demo.html public/demo/index.html
+          echo "/demo/ matches public/demo/index.html"
+          check / 200
+          curl -s "$base/" > live-desk.html
+          cmp live-desk.html public/index.html
+          echo "/ matches public/index.html"
           check /api/health 200
-          curl -s "$base/api/health"
+          if [ -n "$DESK_TOKEN" ]; then
+            check /api/leads 401
+            code=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $DESK_TOKEN" "$base/api/leads")
+            [ "$code" = 200 ] || { echo "/api/leads with the desk password returned $code"; exit 1; }
+            echo "/api/leads with the desk password -> 200"
+          else
+            check /api/leads 503
+          fi
+          count=$(npx wrangler d1 execute "$DB_NAME" --remote --json --command "SELECT COUNT(*) AS n FROM leads" | jq -r '.[0].results[0].n')
+          echo "Leads in D1: $count"
+          echo "Leads in D1: $count" >> "$GITHUB_STEP_SUMMARY"
