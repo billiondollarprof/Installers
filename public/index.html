@@ -166,7 +166,7 @@ textarea{min-height:70px;resize:vertical}
     <li><b>Call 10 a day</b>Use the Script tab. Ask the one question, listen, and offer the two minute video only to owners who see the problem.</li>
     <li><b>Send the video the same day</b>Personalise the demo with their business name, record it, send it on WhatsApp or email, and set the lead to Video sent. The desk sets the follow up for two days later.</li>
     <li><b>Follow up on the day you promised</b>Open Due today each morning. Call, ask what they thought, and offer the pilot.</li>
-    <li><b>Close with a deposit</b>£1,500 to set up, £500 to start and the rest when it goes live. Monthly care at £199 is offered after it is live, never before.</li>
+    <li><b>Close with a deposit</b>£1,500 to set up: £500 to start, and the other £1,000 only if it books the agreed number of calls from their old quotes in 30 days (about 2.5% of the quotes messaged). Monthly care at £199 is offered after it is live, never before.</li>
   </ol>
   <h2>What counts</h2>
   <p class="tip">After two weeks, look at the numbers at the top of Leads: how many calls it takes to get one interested owner, and how many interested owners it takes to get one deposit. Change the opening line or the region if the first number is poor; change the offer if the second is.</p>
@@ -411,7 +411,8 @@ var SCRIPT = [
   ["say","When you send a quote and the customer stops replying, what usually happens to it?"],
   ["tip","Now stop talking. Let them answer, however long it takes. Their answer tells you whether they have the problem."],
   ["h","3. Dig a little"],
-  ["say","Roughly how many quotes do you send in a month?|And how many of those would you say you chase more than once?|What about the ones from six months ago, does anyone go back to those?"],
+  ["say","Roughly how many quotes do you send in a month?|And how many of those would you say you chase more than once?|What about the ones from six months ago, does anyone go back to those?|What's the most annoying thing after someone asks you for a quote?"],
+  ["tip","Listen, and write the answer in their notes. If the real pain is something else, note it for the next ideas list."],
   ["h","4. The bridge"],
   ["say","That's what most owners tell me. Those quotes aren't lost, they just went quiet.|I've built a system that messages them politely in your name, asks if they're still interested, and books the ones who are into a call with you. Then it does the same for every new quote, so none go quiet again."],
   ["h","5. The ask"],
@@ -421,14 +422,14 @@ var SCRIPT = [
   ["h","If they say"],
   ["ob","“We already follow up.”|Good, that puts you ahead of most. How about the quotes from six months or a year ago? That's usually where the money is sitting."],
   ["ob","“Not interested.”|No problem at all, thanks for your time. (Mark them Not interested and move on. Never push.)"],
-  ["ob","“How much is it?”|It's a one off setup of £1,500: £500 to start, and the rest when it's live and working. The video shows exactly what you'd get."],
+  ["ob","“How much is it?”|It's £1,500 in total. £500 to start, then it runs on your old quotes for 30 days, and you only pay the other £1,000 if it books the number of calls we agree up front. The video shows exactly what you'd get."],
   ["ob","“Is this spam? Customers will hate it.”|It only messages people who asked you for a quote, in your name, with an opt out on every message. If they don't reply after two messages, it stops. Nobody gets pestered."],
   ["ob","“Is it AI?”|The first messages are set by you, word for word. If a customer types a question, an assistant answers using your own information, and anything it can't answer goes straight to you."],
   ["ob","“Just email me something.”|Of course. What's the best address? I'll send the two minute video, and I'll call {day} to see if it's useful."],
   ["ob","“Where are you based?”|Tell the truth: I work remotely with UK businesses. Then carry on. Honesty here builds more trust than any line."],
   ["h","The follow up call, two days later"],
   ["say","Hi {name}, it's {me}. I sent you the video on {sentday}. Did you get a chance to watch it?"],
-  ["say","What did you think?|The simplest way to try it is on your old quotes. You send me the quotes from the last six to twelve months, I set it up in your name, and you see the replies come in. It's £500 to start and the rest when it's live. Shall we get you set up?"],
+  ["say","What did you think?|The simplest way to try it is on your old quotes. You send me the quotes from the last six to twelve months, I set it up in your name, and you see the replies come in. It's £500 to start. Then it runs for 30 days, and you only pay the other £1,000 if it books the number of calls we agree up front. Shall we get you set up?"],
   ["tip","If they haven't watched it: “No problem, it's two minutes. When can I call you back?” Set the date on their card."],
   ["h","Voicemail"],
   ["say","Hi {name}, it's {me}. I help window and door companies win back quotes that went quiet. I'll try you again on {day}. Thanks."],

@@ -23,6 +23,9 @@ Then stop talking and listen.
 "Roughly how many quotes do you send in a month?"
 "How many of those would you say you chase more than once?"
 "What about the ones from six months ago, does anyone go back to those?"
+"What's the most annoying thing after someone asks you for a quote?"
+Listen, and write the answer in their notes. If the real pain is something
+else, note it for the next ideas list.
 
 ## 4. Bridge
 "That's what most owners tell me. Those quotes aren't lost, they just went
@@ -41,8 +44,9 @@ think? Morning or afternoon?"
   quotes from six months or a year ago? That's usually where the money is.
 - **"Not interested."** No problem at all, thanks for your time. Mark it, move
   on, never push.
-- **"How much?"** It's a one off setup of £1,500: £500 to start and the rest
-  when it's live and working. The video shows exactly what you'd get.
+- **"How much?"** It's £1,500 in total. £500 to start, then it runs on your
+  old quotes for 30 days, and you only pay the other £1,000 if it books the
+  number of calls we agree up front. The video shows exactly what you'd get.
 - **"Is this spam?"** It only messages people who asked you for a quote, in
   your name, with an opt out on every message. No reply after two messages and
   it stops.
@@ -57,8 +61,9 @@ think? Morning or afternoon?"
 "Hi {name}, it's {me}. I sent you the video on {sentday}. Did you get a chance
 to watch it? What did you think? The simplest way to try it is on your old
 quotes. You send me the quotes from the last six to twelve months, I set it up
-in your name, and you see the replies come in. It's £500 to start and the rest
-when it's live. Shall we get you set up?"
+in your name, and you see the replies come in. It's £500 to start. Then it
+runs for 30 days, and you only pay the other £1,000 if it books the number of
+calls we agree up front. Shall we get you set up?"
 
 ## Voicemail
 "Hi {name}, it's {me}. I help window and door companies win back quotes that

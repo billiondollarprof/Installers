@@ -39,7 +39,30 @@ Settled with the owner in October 2026. Do not re-open without being asked.
 
 ## Pricing (owner's numbers)
 
-- Build: **£1,500**, with **£500 upfront** and the balance on handover.
+- Build: **£1,500**, with **£500 upfront** and the **£1,000 balance only if
+  it works** (the 30 day proof below).
+- **30 day proof (agreed November 2026).** The £500 starts the build and is
+  not refunded: no refunds, so no escrow is needed. The system then runs on the
+  client's old quotes for 30 days. The balance is due only if it books at
+  least the agreed number of calls in that time.
+  - **The number:** half our 5% planning rate, so about 2.5% of the old quotes
+    messaged, agreed in writing before the start (for example 200 quotes, 5
+    calls). One recovered job usually pays for the whole build.
+  - **What counts:** a customer who replies and confirms a call slot, or asks
+    to be called. The system logs each one (name, time, slot) and alerts the
+    owner as it happens, so both sides see the same count. Never measure jobs
+    won: only the owner can see those, and turning a call into a sale is the
+    owner's job.
+  - **If it works and they will not pay:** the system runs on our WhatsApp
+    and AI accounts until the balance is paid, and is handed over only after
+    payment. The agreement says it stops if the balance is unpaid 7 days after
+    the 30 days end.
+  - Write all of this into a one page agreement both sides sign before the
+    start.
+- **Next ideas list.** Anything a client asks for during a build goes on a
+  list, not into the build. Hand them the list at the end; it becomes the
+  monthly care work (instant reply to new enquiries, reminders before survey
+  visits, review requests after an install).
 - Monthly care: **£199**, offered only after the system is live, never in the
   first pitch. It covers maintenance and the running costs (mostly WhatsApp
   per message fees; the AI calls cost little). Put a monthly message cap in it
