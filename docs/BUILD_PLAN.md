@@ -45,7 +45,10 @@ and Account read. Scope it to the one account.
    the `window.claude.use("db")` calls with `fetch` to the API. Keep the UI,
    the script and the rules exactly as they are. Poll or refresh after each
    write; real time is not needed.
-5. **Finder, find step.** Places API (New) Text Search:
+5. **Finder, find step.** (November 2026: there is no budget for Google
+   Places. Use the free source chosen in `docs/HANDOVER.md` section 5, step
+   3. The Places notes below stay for if a card is added later.) Places API
+   (New) Text Search:
    `POST https://places.googleapis.com/v1/places:searchText` with a field mask
    limited to what we use (`places.id`, `places.displayName`,
    `places.formattedAddress`, `places.nationalPhoneNumber`,

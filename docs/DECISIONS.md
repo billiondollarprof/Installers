@@ -39,32 +39,50 @@ Settled with the owner in October 2026. Do not re-open without being asked.
 
 ## Pricing (owner's numbers)
 
-- Build: **£1,500**, with **£500 upfront** and the **£1,000 balance only if
-  it works** (the 30 day proof below).
-- **30 day proof (agreed November 2026).** The £500 starts the build and is
-  not refunded: no refunds, so no escrow is needed. The system then runs on the
-  client's old quotes for 30 days. The balance is due only if it books at
-  least the agreed number of calls in that time.
-  - **The number:** half our 5% planning rate, so about 2.5% of the old quotes
-    messaged, agreed in writing before the start (for example 200 quotes, 5
-    calls). One recovered job usually pays for the whole build.
-  - **What counts:** a customer who replies and confirms a call slot, or asks
-    to be called. The system logs each one (name, time, slot) and alerts the
-    owner as it happens, so both sides see the same count. Never measure jobs
-    won: only the owner can see those, and turning a call into a sale is the
-    owner's job.
-  - **If it works and they will not pay:** the system runs on our WhatsApp
-    and AI accounts until the balance is paid, and is handed over only after
-    payment. The agreement says it stops if the balance is unpaid 7 days after
-    the 30 days end.
-  - Write all of this into a one page agreement both sides sign before the
-    start.
+- Build: **£1,500** in three parts (agreed November 2026, replaces the
+  earlier "£500 then balance on handover" and the "30 day proof"):
+  - **£100 to book the build**, when they say yes. Small enough for a
+    stranger, and it filters out time wasters before any build work.
+  - **£400 on go live day**, after they have seen and approved test messages
+    on their own phone, and before any message goes to their customers.
+  - **£1,000 when the system has booked 5 calls** from their old quotes (or
+    from new quotes, whenever the 5th comes; no time limit).
+  - No refunds at any stage, so no escrow is needed.
+- **List size rule** (ask them to count roughly before taking the £100):
+  150 or more old quotes with a phone number: 5 bookings. 60 to 150: 3
+  bookings. Under 60: politely say it is not a fit yet. Planning rate is about
+  5% of contacts booking, so these targets are reachable.
+- **What counts as a booking:** a customer who replies and confirms a time
+  for a call, or asks to be called. Our system logs each one (name, time,
+  slot) and alerts the owner as it happens, so both sides see the same count.
+  Never measure jobs won: only the owner sees those, and turning a booked call
+  into a sale is the owner's job. These are people who already asked for a
+  price and have come back, so the interest is real.
+- **If the 5th booking comes and they do not pay:** our server runs the
+  conversations, so it stops replying and booking if the balance is unpaid 7
+  days after the 5th booking. Written into the agreement.
+- **If 300 messages go out and there are no 5 bookings:** the campaign ends
+  anyway (two messages per customer at most). We keep the £500, our costs are
+  covered, the system keeps answering new quotes, and the balance falls due
+  if and when the 5th booking comes. Offer to reach the customers who are not
+  on WhatsApp by SMS or email at no extra charge.
+- **One page agreement** signed before the £100: the payment plan, what counts
+  as a booking, the list size rule, the switch off, who pays WhatsApp fees, an
+  opt out on every message, and the client's confirmation that customers were
+  given an opt out when they asked for a quote. Have it checked by someone
+  qualified in UK contract law.
+- **Trust as a newcomer:** say honestly they are one of the first installer
+  clients ("that is why I only take the big part once it has booked you five
+  calls"); a business email on our own domain; real name and face in the
+  video; card payment by invoice (Stripe or similar) so they have their
+  bank's protection; optionally a UK limited company (about £50, check the
+  rules for directors abroad first).
 - **Next ideas list.** Anything a client asks for during a build goes on a
   list, not into the build. Hand them the list at the end; it becomes the
   monthly care work (instant reply to new enquiries, reminders before survey
   visits, review requests after an install).
-- Monthly care: **£199**, offered only after the system is live, never in the
-  first pitch. It covers maintenance and the running costs (mostly WhatsApp
+- Monthly care: **£199**, raised only after the £1,000 balance is paid,
+  never in the first pitch. It covers maintenance and the running costs (mostly WhatsApp
   per message fees; the AI calls cost little). Put a monthly message cap in it
   so one busy client cannot eat the margin.
 - Write the retainer into the contract as optional from day one, including
@@ -98,12 +116,45 @@ Settled with the owner in October 2026. Do not re-open without being asked.
 - **WhatsApp on the virtual number:** register WhatsApp Business using the
   "Call me" verification. Ask the provider first whether the number can
   receive verification calls.
+- **Call volume:** aim for 20 dials a day (many will not connect). Plan per
+  100 dials: about 25 to 35 reach the owner, 8 to 12 accept the video, 3 to 5
+  real follow ups, 1 to 2 pay the £100. These are assumptions, not data:
+  after the first 100 dials, read the desk's pipeline counts and change the
+  opener if few reach "Interested", or the offer if few pay.
+- **Line cost:** about $1.20 a day for 20 calls of 3 minutes to UK mobiles on
+  Zadarma, plus the number's rental.
 - **WhatsApp is not a cold channel.** WhatsApp's Business Messaging Policy
   needs the person's number and their opt in before a business messages or
   calls them, and business initiated calls through the API need a separate
   call permission. Cold WhatsApp calls risk the number being banned. Use it
   after the first phone call, once the owner has said WhatsApp is fine (the
   script already asks "Is WhatsApp or email better for you?").
+
+## Running the client system (WhatsApp and AI)
+
+- **Each client gets their own WhatsApp Business account, in their name,**
+  on their business number or a new UK number. Never Amara's account (Meta
+  allows one business per WhatsApp Business account, and sending limits are
+  shared across a Meta business portfolio, so a client's spam reports could
+  hurt Amara), and never the owner's own number. The law agrees: customers
+  gave their number to the installer, so only the installer may message them.
+- **Sign up through a provider that bills our card** (Twilio or similar, with
+  Meta's embedded sign up): the client logs in with their own Facebook, Meta
+  checks the business and approves the display name (can take days, so start
+  it the day they pay £100). Meta has a way for a number to keep the
+  WhatsApp Business app on the phone while a system sends from it; confirm
+  per client.
+- **Our server and AI run the conversations.** The owner writes every
+  template; the AI only answers replies, from the client's own information,
+  and hands anything it cannot answer to the client. The off switch is on
+  our server.
+- **Cost per client campaign** (300 old quotes, first message plus one
+  reminder to non repliers): about 555 template messages at Meta's UK
+  marketing rate of about 4.6p (October 2026), about £25, plus a small
+  provider mark up, plus AI under £2. Plan for **about £40**, paid by us and
+  covered by the £500. New numbers can only message a limited number of new
+  people a day, so 300 messages go out over about 2 days. Check Meta's live
+  price page before the first client.
 
 ## Legal (UK)
 
@@ -132,6 +183,21 @@ Settled with the owner in October 2026. Do not re-open without being asked.
   under the Open Government Licence.
 - **Websites:** read a business's own public contact page for its email,
   respect robots.txt, go slowly.
+
+## Ideas checked and their verdict
+
+- **AI receptionist for inbound enquiries** (YouTube, dental clinic): it is
+  our monthly care offer, not a new business. Take from it: live AI replies in
+  the demo through our Worker, "acknowledge first, then ask", and researching
+  each prospect's website so the demo knows their business.
+- **Free website first, then sell automation** (YouTube): not for us. Our
+  targets already have websites. Take from it: pick one number before going
+  live (booked calls), keep a next ideas list, and expect about 15 calls
+  before the first yes.
+- **Gemini free tier for the demo AI:** not allowed for apps used in the UK
+  (Google's Gemini API terms); use Cloudflare Workers AI's free allowance, or
+  a few pounds of Claude or DeepSeek credit.
+- **3D websites:** a possible second offer later, in its own repo. Parked.
 
 ## The demo (built)
 

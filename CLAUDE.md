@@ -1,5 +1,12 @@
 # Quote Recovery: rules for every Claude session in this repo
 
+**Start here:** `docs/HANDOVER.md` is the full memory of earlier sessions:
+what is live, what the owner still has to do, every decision, and the next
+steps in order. A new session should read it and carry on as if it were the
+same conversation. The work is on branch `ccr-9b35ccd8-fso3n4` until the
+owner merges it into `main`. Keep `docs/HANDOVER.md` up to date at the end of
+every session.
+
 Read this file in full before doing anything. Then read `docs/HANDOVER.md`
 (where the last session stopped), `docs/DECISIONS.md`
 (what has already been decided and why) and `docs/BUILD_PLAN.md` (what is
@@ -19,13 +26,12 @@ This repo holds three things:
 1. **The sales demo** (`public/demo/`): a tap to play WhatsApp, SMS or email
    chat that shows the recovery process with the prospect's business name in
    it. The owner screen records it on a phone for personalised videos.
-2. **The lead finder** (to build): a Cloudflare Worker that finds qualified
-   installers, checks them, and stores them in Cloudflare D1, on a weekly
-   schedule.
-3. **The Lead Desk** (to port): the owner's calling desk with leads, call,
-   WhatsApp and email buttons, follow up dates, and the call script. The
-   working version lives today as a Claude artifact; `reference/` holds its
-   source. It must be ported to read and write D1 through the Worker.
+2. **The lead finder** (to build, on a free source; there is no Google
+   Places budget): a Cloudflare Worker that finds qualified installers,
+   checks them, and stores them in Cloudflare D1, on a weekly schedule.
+3. **The Lead Desk** (live at `/`): the owner's calling desk with leads, call,
+   WhatsApp and email buttons, follow up dates, and the call script. It reads
+   and writes D1 through the Worker's `/api/leads`.
 
 This is separate from Amara (the owner's Nigerian hospitality product) on
 purpose. Do not import Amara code, and do not touch the Amara repo from here.
@@ -82,7 +88,7 @@ purpose. Do not import Amara code, and do not touch the Amara repo from here.
 | `docs/SCRIPT.md` | The call script, follow up messages and video plan. |
 | `docs/RESEARCH.md` | Sources behind the decisions. |
 
-## Live links (Claude artifacts, private to the owner)
+## Old Claude artifacts (on the owner's previous Claude account)
 
 - Demo: https://claude.ai/artifact/5GBWF6v5GTZN2yZFPopNk1
 - Lead Desk (old): https://claude.ai/artifact/SqaNjLJCdvTSDSHUGX7BGD (holds the first 29 hand found Kent leads; being moved to D1)
@@ -92,4 +98,4 @@ purpose. Do not import Amara code, and do not touch the Amara repo from here.
 - Worker: https://quote-recovery.billiondollarprof.workers.dev
 - Demo: https://quote-recovery.billiondollarprof.workers.dev/demo/
 - Lead Desk: https://quote-recovery.billiondollarprof.workers.dev/ (password: the `DESK_TOKEN` GitHub secret)
-- Deploys from branch `ccr-9b35ccd8-fso3n4` via `.github/workflows/deploy.yml`
+- Deploys on push to `ccr-9b35ccd8-fso3n4` or `main` via `.github/workflows/deploy.yml`

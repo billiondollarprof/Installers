@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [ccr-9b35ccd8-fso3n4]
+    branches: [ccr-9b35ccd8-fso3n4, main]
   workflow_dispatch:
 
 concurrency:
